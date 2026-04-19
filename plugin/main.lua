@@ -19,34 +19,34 @@ _G.L = {}
 
 -- since English & German are supported at release, load their locale files directly
 if (locale == "en" or locale == "de") then
-  import ("CombatAnalysisGroup.Locale."..locale);
+  import ("TumbaAnalysis.Locale."..locale);
 -- for all other languages, we now load the English locale file first, then load the language specific file (which may only override some values) only if it exists
 else
-  import ("CombatAnalysisGroup.Locale.en");
-  pcall(import, ("CombatAnalysisGroup.Locale."..locale));
+  import ("TumbaAnalysis.Locale.en");
+  pcall(import, ("TumbaAnalysis.Locale."..locale));
 end
 
 -- Import Utils & UI
-import "CombatAnalysisGroup.Utils";
-import "CombatAnalysisGroup.UI";
+import "TumbaAnalysis.Utils";
+import "TumbaAnalysis.UI";
 
 -- Import Other Helper Classes
-import "CombatAnalysisGroup.Data";
-import "CombatAnalysisGroup.Players";
-import "CombatAnalysisGroup.Parser";
+import "TumbaAnalysis.Data";
+import "TumbaAnalysis.Players";
+import "TumbaAnalysis.Parser";
 
 -- Import the Main Menu (and Help Menu)
-import "CombatAnalysisGroup.Menu"; --- v4.1/4.2
-import "CombatAnalysisGroup.Help"; --- v4.2+
+import "TumbaAnalysis.Menu"; --- v4.1/4.2
+import "TumbaAnalysis.Help"; --- v4.2+
 
 -- Import each individual Plugin package
-import "CombatAnalysisGroup.StatOverview";     --- v4.0
-import "CombatAnalysisGroup.Effects";          --- v4.1 (for BuffBars Debuff/CC tracking)
--- import "CombatAnalysisGroup.StatAnalysis";  --- v4.3+
--- import "CombatAnalysisGroup.FloatyInfo";    --- v4.3/4+
--- import "CombatAnalysisGroup.ChatFiltering"; --- ? (possible future feature)
--- import "CombatAnalysisGroup.HealingBars";   --- ? (possible future feature)
--- import "CombatAnalysisGroup.GearScore";     --- ? (possible future feature)
+import "TumbaAnalysis.StatOverview";     --- v4.0
+import "TumbaAnalysis.Effects";          --- v4.1 (for BuffBars Debuff/CC tracking)
+-- import "TumbaAnalysis.StatAnalysis";  --- v4.3+
+-- import "TumbaAnalysis.FloatyInfo";    --- v4.3/4+
+-- import "TumbaAnalysis.ChatFiltering"; --- ? (possible future feature)
+-- import "TumbaAnalysis.HealingBars";   --- ? (possible future feature)
+-- import "TumbaAnalysis.GearScore";     --- ? (possible future feature)
 
 --[[ Start up ]]--
 

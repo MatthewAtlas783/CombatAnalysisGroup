@@ -12,15 +12,15 @@
 - Buff &amp; Debuff Durations
 
 For a full list of features, visit:
-http://www.lotrointerface.com/downloads/info881-CombatAnalysisGroup.html
+http://www.lotrointerface.com/downloads/info881-TumbaAnalysis.html
 
 To partcipate in devleopment join Github:
 https://github.com/gjpc/CombatAnalysis
 
 This plugin is in the public domain
 </Description>
-    <Image>CombatAnalysisGroup/Resources/plugin_manager_logo.tga</Image>
+    <Image>TumbaAnalysis/Resources/plugin_manager_logo.tga</Image>
 	</Information>
-	<Package>CombatAnalysisGroup.Main</Package>
+	<Package>TumbaAnalysis.Main</Package>
 	<Configuration Apartment="Vitals"></Configuration>
 </Plugin>

@@ -10,7 +10,7 @@ function DragBar.PrepForRotation(control)
   control.rotator:SetPosition(5, 5);
   control.rotator:SetSize(20, 20);
   control.rotator:SetBlendMode(Turbine.UI.BlendMode.AlphaBlend);
-  control.rotator:SetBackground("CombatAnalysisGroup/Resources/rotate_button_normal.tga");
+  control.rotator:SetBackground("TumbaAnalysis/Resources/rotate_button_normal.tga");
   control.rotator:SetZOrder(99);
   control.rotator:SetVisible(false);
   control.rotator.mouseIn = false;
@@ -18,22 +18,22 @@ function DragBar.PrepForRotation(control)
   
   control.rotator.MouseEnter = function(sender, args)
     control.rotator.mouseIn = true;
-    control.rotator:SetBackground("CombatAnalysisGroup/Resources/rotate_button_"..(control.rotator.pressed and "pressed" or "rollover")..".tga");
+    control.rotator:SetBackground("TumbaAnalysis/Resources/rotate_button_"..(control.rotator.pressed and "pressed" or "rollover")..".tga");
   end
   control.rotator.MouseLeave = function(sender, args)
     control.rotator.mouseIn = false;
-    control.rotator:SetBackground("CombatAnalysisGroup/Resources/rotate_button_"..(control.rotator.pressed and "rollover" or "normal")..".tga");
+    control.rotator:SetBackground("TumbaAnalysis/Resources/rotate_button_"..(control.rotator.pressed and "rollover" or "normal")..".tga");
   end
   control.rotator.MouseDown = function(sender, args)
     if (args.Button == Turbine.UI.MouseButton.Left) then
       control.rotator.pressed = true;
-      control.rotator:SetBackground("CombatAnalysisGroup/Resources/rotate_button_pressed.tga");
+      control.rotator:SetBackground("TumbaAnalysis/Resources/rotate_button_pressed.tga");
     end
   end
   control.rotator.MouseUp = function(sender, args)
     if (args.Button == Turbine.UI.MouseButton.Left) then
       control.rotator.pressed = false;
-      control.rotator:SetBackground("CombatAnalysisGroup/Resources/rotate_button_"..(control.rotator.mouseIn and "rollover" or "normal")..".tga");
+      control.rotator:SetBackground("TumbaAnalysis/Resources/rotate_button_"..(control.rotator.mouseIn and "rollover" or "normal")..".tga");
     end
   end
   control.rotator.MouseClick = function(sender, args)
@@ -83,8 +83,8 @@ function DragBar:Constructor(target, name)
   end
   self.grabber.MouseDown = function(sender, args)
     if (args.Button == Turbine.UI.MouseButton.Left and self.target ~= nil) then
-      self.gem:SetBackground("CombatAnalysisGroup/Resources/drag_gem_click.tga");
-      self.label:SetBackground("CombatAnalysisGroup/Resources/drag_bar_click.tga");
+      self.gem:SetBackground("TumbaAnalysis/Resources/drag_gem_click.tga");
+      self.label:SetBackground("TumbaAnalysis/Resources/drag_bar_click.tga");
       self.dragStartX = args.X;
       self.dragStartY = args.Y;
       self.grabber.dragging = true;
@@ -105,8 +105,8 @@ function DragBar:Constructor(target, name)
   end
   self.grabber.MouseUp = function(sender, args)
     if (args.Button == Turbine.UI.MouseButton.Left and self.target ~= nil) then
-      self.gem:SetBackground("CombatAnalysisGroup/Resources/drag_gem.tga");
-      self.label:SetBackground("CombatAnalysisGroup/Resources/drag_bar.tga");
+      self.gem:SetBackground("TumbaAnalysis/Resources/drag_gem.tga");
+      self.label:SetBackground("TumbaAnalysis/Resources/drag_bar.tga");
       self.grabber.dragging = false;
       if (self.target.DragEnd) then self.target:DragEnd() end
       
@@ -130,7 +130,7 @@ function DragBar:Constructor(target, name)
   self.gem:SetSize(21, 20);
   self.gem:SetPosition(0, 0);
   self.gem:SetMouseVisible(false);
-  self.gem:SetBackground("CombatAnalysisGroup/Resources/drag_gem.tga");
+  self.gem:SetBackground("TumbaAnalysis/Resources/drag_gem.tga");
   
   -- label
   self.label = Turbine.UI.Label();
@@ -142,7 +142,7 @@ function DragBar:Constructor(target, name)
   self.label:SetFontStyle(Turbine.UI.FontStyle.Outline);
   self.label:SetText(name);
   self.label:SetMouseVisible(false);
-  self.label:SetBackground("CombatAnalysisGroup/Resources/drag_bar.tga");
+  self.label:SetBackground("TumbaAnalysis/Resources/drag_bar.tga");
   
   -- shadow box
   self.shadowBox = Turbine.UI.Window();
@@ -172,56 +172,56 @@ function DragBar:Constructor(target, name)
   self.topLeft:SetParent(self.shadowBox);
   self.topLeft:SetSize(10, 10);
   self.topLeft:SetMouseVisible(false);
-  self.topLeft:SetBackground("CombatAnalysisGroup/Resources/drag_topleft.tga");
+  self.topLeft:SetBackground("TumbaAnalysis/Resources/drag_topleft.tga");
 
   -- topRight
   self.topRight = Turbine.UI.Control();
   self.topRight:SetParent(self.shadowBox);
   self.topRight:SetSize(10, 10);
   self.topRight:SetMouseVisible(false);
-  self.topRight:SetBackground("CombatAnalysisGroup/Resources/drag_topright.tga");
+  self.topRight:SetBackground("TumbaAnalysis/Resources/drag_topright.tga");
   
   -- bottomLeft
   self.bottomLeft = Turbine.UI.Control();
   self.bottomLeft:SetParent(self.shadowBox);
   self.bottomLeft:SetSize(10, 10);
   self.bottomLeft:SetMouseVisible(false);
-  self.bottomLeft:SetBackground("CombatAnalysisGroup/Resources/drag_bottomleft.tga");
+  self.bottomLeft:SetBackground("TumbaAnalysis/Resources/drag_bottomleft.tga");
 
   -- bottomRight
   self.bottomRight = Turbine.UI.Control();
   self.bottomRight:SetParent(self.shadowBox);
   self.bottomRight:SetSize(10, 10);
   self.bottomRight:SetMouseVisible(false);
-  self.bottomRight:SetBackground("CombatAnalysisGroup/Resources/drag_bottomright.tga");
+  self.bottomRight:SetBackground("TumbaAnalysis/Resources/drag_bottomright.tga");
 
   -- top side
   self.top = Turbine.UI.Control();
   self.top:SetParent(self.shadowBox);
   self.top:SetSize(0, 10);
   self.top:SetMouseVisible(false);
-  self.top:SetBackground("CombatAnalysisGroup/Resources/drag_topmid.tga");
+  self.top:SetBackground("TumbaAnalysis/Resources/drag_topmid.tga");
 
   -- left side
   self.left = Turbine.UI.Control();
   self.left:SetParent(self.shadowBox);
   self.left:SetSize(10, 0);
   self.left:SetMouseVisible(false);
-  self.left:SetBackground("CombatAnalysisGroup/Resources/drag_midleft.tga");
+  self.left:SetBackground("TumbaAnalysis/Resources/drag_midleft.tga");
 
   -- right side
   self.right = Turbine.UI.Control();
   self.right:SetParent(self.shadowBox);
   self.right:SetSize(10, 0);
   self.right:SetMouseVisible(false);
-  self.right:SetBackground("CombatAnalysisGroup/Resources/drag_midright.tga");
+  self.right:SetBackground("TumbaAnalysis/Resources/drag_midright.tga");
   
   -- bottom side
   self.bottom = Turbine.UI.Control();
   self.bottom:SetParent(self.shadowBox);
   self.bottom:SetSize(0, 10);
   self.bottom:SetMouseVisible(false);
-  self.bottom:SetBackground("CombatAnalysisGroup/Resources/drag_bottommid.tga");
+  self.bottom:SetBackground("TumbaAnalysis/Resources/drag_bottommid.tga");
   
   -- set the target
   self:SetTarget(target);

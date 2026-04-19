@@ -19,5 +19,5 @@ _G.recentTempMorale = {} -- recent temp morale that has been lost (and may not h
 _G.logDelay = 1.5;
 _G.effectDelay = 1.0;
 
-import "CombatAnalysisGroup.Players.Skills"
-import "CombatAnalysisGroup.Players.Player"
+import "TumbaAnalysis.Players.Skills"
+import "TumbaAnalysis.Players.Player"

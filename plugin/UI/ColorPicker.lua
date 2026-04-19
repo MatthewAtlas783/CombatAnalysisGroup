@@ -92,14 +92,14 @@ function ColorPicker:CreateBorder(color,top)
   border.MouseEnter = function(sender,args)
     if (not self.enabled) then return end
     
-    sender.arrow:SetBackground("CombatAnalysisGroup/Resources/color_picker_arrow_mouseover.tga");
+    sender.arrow:SetBackground("TumbaAnalysis/Resources/color_picker_arrow_mouseover.tga");
   end
   
   border.MouseLeave = function(sender,args)
     if (not self.enabled) then return end
     
     if (not sender.pressed and not sender.arrow.pressed) then
-      sender.arrow:SetBackground("CombatAnalysisGroup/Resources/color_picker_arrow.tga");
+      sender.arrow:SetBackground("TumbaAnalysis/Resources/color_picker_arrow.tga");
     end
   end
   
@@ -122,7 +122,7 @@ function ColorPicker:CreateBorder(color,top)
   
   border.MouseUp = function(sender,args)
     sender.pressed = false;
-    sender.arrow:SetBackground("CombatAnalysisGroup/Resources/color_picker_arrow.tga");
+    sender.arrow:SetBackground("TumbaAnalysis/Resources/color_picker_arrow.tga");
   end
   
   return border;
@@ -133,7 +133,7 @@ function ColorPicker:CreateAlphaBackground(top)
   alphaBackground:SetParent(self);
   alphaBackground:SetSize(67,11);
   alphaBackground:SetPosition(19,top);
-  alphaBackground:SetBackground("CombatAnalysisGroup/Resources/transparent_background.tga");
+  alphaBackground:SetBackground("TumbaAnalysis/Resources/transparent_background.tga");
   alphaBackground:SetMouseVisible(false);
   return alphaBackground;
 end
@@ -156,7 +156,7 @@ function ColorPicker:CreateArrow(border,color,top)
   arrow:SetZOrder(1);
   arrow:SetSize(8,8);
   arrow:SetPosition(16,top);
-  arrow:SetBackground("CombatAnalysisGroup/Resources/color_picker_arrow.tga");
+  arrow:SetBackground("TumbaAnalysis/Resources/color_picker_arrow.tga");
   arrow:SetBlendMode(4);
   
   arrow.MouseEnter = function(sender,args)
@@ -258,7 +258,7 @@ function ColorPicker:CreateDisplayBorder(top)
   displayBackground:SetParent(displayBorder);
   displayBackground:SetPosition(1,1);
   displayBackground:SetSize(18,18);
-  displayBackground:SetBackground("CombatAnalysisGroup/Resources/transparent_background.tga");
+  displayBackground:SetBackground("TumbaAnalysis/Resources/transparent_background.tga");
   
   return displayBorder;
 end

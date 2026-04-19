@@ -52,7 +52,7 @@ function AboutMenuPanel:Constructor(window)
   self.url:SetFont(Turbine.UI.Lotro.Font.TrajanPro14);
   self.url:SetForeColor(Turbine.UI.Color(1,0.94,0.85));
   self.url:SetTextAlignment(Turbine.UI.ContentAlignment.TopLeft);
-	self.url:SetText("http://www.lotrointerface.com/downloads/info881-CombatAnalysisGroup.html");
+	self.url:SetText("http://www.lotrointerface.com/downloads/info881-TumbaAnalysis.html");
   
   self.bugMessage = MenuLabel(self.content,(locale == "en" and 162 or 177),self.width-50,100,"14");
   self.bugMessage:SetTextAlignment(Turbine.UI.ContentAlignment.TopLeft);

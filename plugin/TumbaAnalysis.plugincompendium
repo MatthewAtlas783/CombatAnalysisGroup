@@ -4,10 +4,10 @@
   <Name>TumbaAnalysis</Name>
   <Version>1.0.0</Version>
   <Author>Landal</Author>
-  <InfoUrl>http://www.lotrointerface.com/downloads/info881-CombatAnalysisGroup.html</InfoUrl>
+  <InfoUrl>http://www.lotrointerface.com/downloads/info881-TumbaAnalysis.html</InfoUrl>
   <DownloadUrl>http://www.lotrointerface.com/downloads/download881-CombatAnalysis</DownloadUrl>
   <Descriptors>
-    <descriptor>CombatAnalysis\CombatAnalysisGroup.plugin</descriptor>
+    <descriptor>TumbaAnalysis\TumbaAnalysis.plugin</descriptor>
   </Descriptors>
   <Dependencies />
 </PluginConfig>

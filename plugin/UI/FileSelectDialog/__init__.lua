@@ -1,4 +1,4 @@
-import "CombatAnalysisGroup.UI.FileSelectDialog.FileSelectItem"
-import "CombatAnalysisGroup.UI.FileSelectDialog.FileSelectEncounterItem"
-import "CombatAnalysisGroup.UI.FileSelectDialog.FileSelectBox"
-import "CombatAnalysisGroup.UI.FileSelectDialog.FileSelectDialog"
+import "TumbaAnalysis.UI.FileSelectDialog.FileSelectItem"
+import "TumbaAnalysis.UI.FileSelectDialog.FileSelectEncounterItem"
+import "TumbaAnalysis.UI.FileSelectDialog.FileSelectBox"
+import "TumbaAnalysis.UI.FileSelectDialog.FileSelectDialog"

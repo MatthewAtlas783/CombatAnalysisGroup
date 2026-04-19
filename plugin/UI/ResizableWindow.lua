@@ -38,7 +38,7 @@ function ResizableWindow:Constructor()
 	self.resizeIcon:SetZOrder(2);
 	self.resizeIcon:SetMouseVisible(false);
 	self.resizeIcon:SetBlendMode(Turbine.UI.BlendMode.AlphaBlend);
-	self.resizeIcon:SetBackground("CombatAnalysisGroup/Resources/panel_resize_icon.tga");
+	self.resizeIcon:SetBackground("TumbaAnalysis/Resources/panel_resize_icon.tga");
 	
 	-- top left resize arrow
 	self.topLeftResize = Turbine.UI.Control();
@@ -561,7 +561,7 @@ function ResizableWindow:Constructor()
 end
 
 function ResizableWindow:Layout()
-	CombatAnalysisGroup.UI.Window.Layout(self);
+	TumbaAnalysis.UI.Window.Layout(self);
 	width,height = self:GetSize();
 	
 	self.resizeIcon:SetPosition(width - 45, height - 45);

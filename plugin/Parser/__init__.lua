@@ -1,4 +1,4 @@
 
 _G.pendingDebuffs = OrderedList();
 
-import "CombatAnalysisGroup.Parser.Parser"
+import "TumbaAnalysis.Parser.Parser"

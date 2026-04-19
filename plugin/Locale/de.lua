@@ -5,7 +5,7 @@ L["TranslatedBy"] = "Deutsche \195\156bersetzung von Dero/Amtholdiel/Ischabux";
 L["FailedToLoadTraitsResetConfirmation"] = "Laden der Eigenschaften fehlgeschlagen. Zur\195\188cksetzen und fortfahren?".."\n".."Warnung: Alle vorgenommenen Buff-/ und Debuff-Einstellungen gehen dabei verloren.";
 L["FailedToLoadTraitsMessage"] = "Es wird empfohlen, das Plugin jetzt zu entladen. Sie k\195\182nnen versuchen, die Eigenschaften-Datei auf Fehler zu \195\188berpr\195\188fen:\n\"Documents\\The Lord of the Rings Online\\PluginData\\<AccountName>\\<Server>\\<CharakterName>\\CombatAnalysisTraits.plugindata\"";
 L["FailedToLoadSettingsResetConfirmation"] = "Laden der Einstellungen fehlgeschlagen. Zur\195\188cksetzen und fortfahren?".."\n".."Warnung: Alle vorgenommenen Einstellungen gehen dabei verloren (ausgenommen Buff- und Debuff-Einstellungen).";
-L["FailedToLoadSettingsMessage"] = "Es wird empfohlen, das Plugin jetzt zu entladen. Sie k\195\182nnen versuchen, die Einstellungen-Datei auf Fehler zu \195\188berpr\195\188fen:\n\"Documents\\The Lord of the Rings Online\\PluginData\\<AccountName>\\<Server>\\<CharakterName>\\CombatAnalysisGroup.plugindata\"";
+L["FailedToLoadSettingsMessage"] = "Es wird empfohlen, das Plugin jetzt zu entladen. Sie k\195\182nnen versuchen, die Einstellungen-Datei auf Fehler zu \195\188berpr\195\188fen:\n\"Documents\\The Lord of the Rings Online\\PluginData\\<AccountName>\\<Server>\\<CharakterName>\\TumbaAnalysis.plugindata\"";
 
 -- Icon Menu
 
@@ -217,7 +217,7 @@ L["ConfigureInBuffBarsLinkTooltip"] = "Klicke um zum BuffBars Men\195\188 zu wec
 L["ClassTooltip"] = "Spezifiziere die Klasse, zu der dieser Buff/Debuff geh\195\182rt.";
 L["TempMoraleEffectNameTooltip"] = "Spezifiziere den Effektnamen f\195\188r diesen Tempor\195\164re-Moral Skill. Der Name muss exakt mit dem Namen des Effekts \195\188bereinstimmen.";
 L["SkillNameTooltip"] = "Spezifiziere einen einzigartigen Namen f\195\188r diesen Buff/Debuff. Dieser wird im Buff/Debuff Tab angezeigt, und, wenn anwendbar, im Effektfenster von BuffBars.";
-L["IconFileNameTooltip"] = "Spezifiziere den Dateinamen (inklusive Dateieindung) von dem Icon das f\195\188r diesen Debuff verwendet werden soll. Das Icon muss im Ordner 'CombatAnalysisGroup/Resources/DebuffIcons' gespeichert sein und sollte 16x16 Pixel gro\195\159 sein.";
+L["IconFileNameTooltip"] = "Spezifiziere den Dateinamen (inklusive Dateieindung) von dem Icon das f\195\188r diesen Debuff verwendet werden soll. Das Icon muss im Ordner 'TumbaAnalysis/Resources/DebuffIcons' gespeichert sein und sollte 16x16 Pixel gro\195\159 sein.";
 L["RemovalOnlyTooltip"] = "Ein 'Nur Entfernen' Debuff wird nicht verfolgt, und wird stattdessen daf\195\188r verwendet, andere Debuffs zu entfernen.";
 L["ToggleSkillTooltip"] = "Ein 'Umschalt-Skill' ist ein Skill, der eingeschaltet wird und unendlich lang anh\195\164lt. F\195\188r diese Debuffs wird angenommen, dass sie anhalten bis das Ziel stirbt, der Kampf endet oder der Buff \195\188berschrieben wird.";
 L["RemovesTooltip"] = "Eine Liste von Debuffs und Crowd Control Skills die entfernt werden, wenn diese Debuff angewandt wird.";

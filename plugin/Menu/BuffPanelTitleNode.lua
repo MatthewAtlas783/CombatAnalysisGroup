@@ -146,7 +146,7 @@ function BuffPanelTitleNode:Constructor(parent,padding,buffType)
     self.tick1.MouseDown = function(sender,args)
       self.clicked = true;
       Traits.UpdateCA(self.buffInfo, not self.buffInfo.ca);
-      self.tick1:SetBackground(self.buffInfo.ca and 0x410e3f4a or "CombatAnalysisGroup/Resources/cross.tga");
+      self.tick1:SetBackground(self.buffInfo.ca and 0x410e3f4a or "TumbaAnalysis/Resources/cross.tga");
       self:MouseDown();
       self.parent:UpdateChecked(true,self.buffInfo.ca or self.buffInfo.removalOnly);
     end
@@ -161,7 +161,7 @@ function BuffPanelTitleNode:Constructor(parent,padding,buffType)
     self.tick2.MouseDown = function(sender,args)
       self.clicked = true;
       Traits.UpdateBB(self.buffInfo, not self.buffInfo.bb);
-      self.tick2:SetBackground(self.buffInfo.bb and 0x410e3f4a or "CombatAnalysisGroup/Resources/cross.tga");
+      self.tick2:SetBackground(self.buffInfo.bb and 0x410e3f4a or "TumbaAnalysis/Resources/cross.tga");
       self:MouseDown();
       self.parent:UpdateChecked(false,self.buffInfo.bb or self.buffInfo.removalOnly);
     end
@@ -210,14 +210,14 @@ function BuffPanelTitleNode:SetBuff(buffInfo)
 	end, self, self);
   
   self.skillIcon:SetVisible(((self.buffType == "Debuff" and self.buffInfo.bb) or self.buffType == "CrowdControl") and not self.remover);
-  self.skillIcon:SetBackground("CombatAnalysisGroup/Resources/DebuffIcons/"..((self.buffInfo.invalidIcon or self.iconName == nil) and "default.tga" or self.iconName));
+  self.skillIcon:SetBackground("TumbaAnalysis/Resources/DebuffIcons/"..((self.buffInfo.invalidIcon or self.iconName == nil) and "default.tga" or self.iconName));
   
   table.insert(self.listeners,{self.buffInfo,"iconName",self});
   Misc.AddListener(self.buffInfo, "iconName", function(sender)    
 		if (self.buffInfo.iconName ~= self.iconName) then
       self.iconName = self.buffInfo.iconName;
       self.skillIcon:SetVisible(((self.buffType == "Debuff" and self.buffInfo.bb) or self.buffType == "CrowdControl") and not self.remover);
-			self.skillIcon:SetBackground("CombatAnalysisGroup/Resources/DebuffIcons/"..((self.buffInfo.invalidIcon or self.iconName == nil) and "default.tga" or self.iconName));
+			self.skillIcon:SetBackground("TumbaAnalysis/Resources/DebuffIcons/"..((self.buffInfo.invalidIcon or self.iconName == nil) and "default.tga" or self.iconName));
       self.skillLabel:SetPosition(((((self.buffType ~= "Debuff" or not self.buffInfo.bb) and self.buffType ~= "CrowdControl") or self.remover) and 90 or 111),3);
       self.skillLabel:SetSize(((self.iconName == nil or self.remover) and 175 or 154)+(self.remover and 60 or 0),self.height-self.padding-6);
 		end
@@ -242,7 +242,7 @@ function BuffPanelTitleNode:SetBuff(buffInfo)
     if (self.buffInfo.removalOnly ~= self.remover) then
       self.remover = self.buffInfo.removalOnly;
       self.skillIcon:SetVisible(((self.buffType == "Debuff" and self.buffInfo.bb) or self.buffType == "CrowdControl") and not self.remover);
-			self.skillIcon:SetBackground("CombatAnalysisGroup/Resources/DebuffIcons/"..((self.buffInfo.invalidIcon or self.iconName == nil) and "default.tga" or self.iconName));
+			self.skillIcon:SetBackground("TumbaAnalysis/Resources/DebuffIcons/"..((self.buffInfo.invalidIcon or self.iconName == nil) and "default.tga" or self.iconName));
       self.skillLabel:SetPosition(((((self.buffType ~= "Debuff" or not self.buffInfo.bb) and self.buffType ~= "CrowdControl") or self.remover)  and 90 or 111),3);
       self.skillLabel:SetSize(((self.iconName == nil or self.remover) and 175 or 154)+(self.remover and 60 or 0),self.height-self.padding-6);
       self.skillLabel:SetText((self.remover and "("..L.RemoverPrefix..") " or "")..(self.skillName == "" and " < "..L.NameRequiredPrefix.." >" or self.skillName));
@@ -270,8 +270,8 @@ function BuffPanelTitleNode:SetBuff(buffInfo)
 	end, self, self);
   
   if (self.buffType == "Debuff") then
-    self.tick1:SetBackground(self.buffInfo.ca and 0x410e3f4a or "CombatAnalysisGroup/Resources/cross.tga");
-    self.tick2:SetBackground(self.buffInfo.bb and 0x410e3f4a or "CombatAnalysisGroup/Resources/cross.tga");
+    self.tick1:SetBackground(self.buffInfo.ca and 0x410e3f4a or "TumbaAnalysis/Resources/cross.tga");
+    self.tick2:SetBackground(self.buffInfo.bb and 0x410e3f4a or "TumbaAnalysis/Resources/cross.tga");
     
     self.mouseEventTheft:SetVisible(not self.buffInfo.removalOnly);
     self.tick1:SetVisible(not self.buffInfo.removalOnly);
@@ -310,14 +310,14 @@ function BuffPanelTitleNode:RemoveError()
 end
 
 function BuffPanelTitleNode:SetSelected(selected)
-  self.tl:SetBackground("CombatAnalysisGroup/Resources/social_panel_list_elements_"..(selected and "highlight" or "normal").."_top_left.tga");
-  self.t:SetBackground("CombatAnalysisGroup/Resources/social_panel_list_elements_"..(selected and "highlight" or "normal").."_top_center.tga");
-  self.tr:SetBackground("CombatAnalysisGroup/Resources/social_panel_list_elements_"..(selected and "highlight" or "normal").."_top_right.tga");
-  self.l:SetBackground("CombatAnalysisGroup/Resources/social_panel_list_elements_"..(selected and "highlight" or "normal").."_middle_left.tga");
-  self.r:SetBackground("CombatAnalysisGroup/Resources/social_panel_list_elements_"..(selected and "highlight" or "normal").."_middle_right.tga");
-  self.bl:SetBackground("CombatAnalysisGroup/Resources/social_panel_list_elements_"..(selected and "highlight" or "normal").."_bottom_left.tga");
-  self.b:SetBackground("CombatAnalysisGroup/Resources/social_panel_list_elements_"..(selected and "highlight" or "normal").."_bottom_center.tga");
-  self.br:SetBackground("CombatAnalysisGroup/Resources/social_panel_list_elements_"..(selected and "highlight" or "normal").."_lower_right.tga");
+  self.tl:SetBackground("TumbaAnalysis/Resources/social_panel_list_elements_"..(selected and "highlight" or "normal").."_top_left.tga");
+  self.t:SetBackground("TumbaAnalysis/Resources/social_panel_list_elements_"..(selected and "highlight" or "normal").."_top_center.tga");
+  self.tr:SetBackground("TumbaAnalysis/Resources/social_panel_list_elements_"..(selected and "highlight" or "normal").."_top_right.tga");
+  self.l:SetBackground("TumbaAnalysis/Resources/social_panel_list_elements_"..(selected and "highlight" or "normal").."_middle_left.tga");
+  self.r:SetBackground("TumbaAnalysis/Resources/social_panel_list_elements_"..(selected and "highlight" or "normal").."_middle_right.tga");
+  self.bl:SetBackground("TumbaAnalysis/Resources/social_panel_list_elements_"..(selected and "highlight" or "normal").."_bottom_left.tga");
+  self.b:SetBackground("TumbaAnalysis/Resources/social_panel_list_elements_"..(selected and "highlight" or "normal").."_bottom_center.tga");
+  self.br:SetBackground("TumbaAnalysis/Resources/social_panel_list_elements_"..(selected and "highlight" or "normal").."_lower_right.tga");
 end
 
 function BuffPanelTitleNode:MouseEnter(args)

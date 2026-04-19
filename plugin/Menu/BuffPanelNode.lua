@@ -896,7 +896,7 @@ function BuffPanelNode:Constructor(nodePadding,buffType,title,panel)
   self.removeTraitConfiguration:SetTop(3);
   self.removeTraitConfiguration:SetSize(15,15);
   self.removeTraitConfiguration:SetBlendMode(Turbine.UI.BlendMode.AlphaBlend);
-  self.removeTraitConfiguration:SetBackground("CombatAnalysisGroup/Resources/remove_icon.tga");
+  self.removeTraitConfiguration:SetBackground("TumbaAnalysis/Resources/remove_icon.tga");
   self.removeTraitConfiguration:SetMouseVisible(false);
   
   self.removeTraitConfigurationLabel = MenuLabel(self.removeTraitControl,0,118,21,"14");

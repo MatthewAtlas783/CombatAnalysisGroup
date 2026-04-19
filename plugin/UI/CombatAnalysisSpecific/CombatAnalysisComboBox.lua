@@ -238,7 +238,7 @@ function CombatAnalysisComboBoxInstance:Constructor(comboBoxGroup,backColor,high
 	self.arrow:SetSize(16,16);
 	self.arrow:SetZOrder(1);
 	self.arrow:SetBlendMode(Turbine.UI.BlendMode.AlphaBlend);
-	self.arrow:SetBackground("CombatAnalysisGroup/Resources/dropdown_arrow_closed_Ghosted.tga");
+	self.arrow:SetBackground("TumbaAnalysis/Resources/dropdown_arrow_closed_Ghosted.tga");
 	self.arrow:SetMouseVisible(false);
 	
 	-- drop down window
@@ -284,14 +284,14 @@ function CombatAnalysisComboBoxInstance:Constructor(comboBoxGroup,backColor,high
 	self.dottedBorder:SetZOrder(2);
 	self.dottedBorder:SetPosition(CombatAnalysisWindow.border,CombatAnalysisWindow.border+CombatAnalysisWindow.titleBarHeight);
 	self.dottedBorder:SetHeight(2);
-	self.dottedBorder:SetBackground("CombatAnalysisGroup/Resources/dotted_line.tga");
+	self.dottedBorder:SetBackground("TumbaAnalysis/Resources/dotted_line.tga");
 	self.dottedBorder:SetBlendMode(Turbine.UI.BlendMode.AlphaBlend);
 	
 	-- dotted line separating the top elements from the rest of the drop down list
 	self.dottedBorderTop = Turbine.UI.Control();
 	self.dottedBorderTop:SetZOrder(2);
 	self.dottedBorderTop:SetHeight(2);
-	self.dottedBorderTop:SetBackground("CombatAnalysisGroup/Resources/dotted_line.tga");
+	self.dottedBorderTop:SetBackground("TumbaAnalysis/Resources/dotted_line.tga");
 	self.dottedBorderTop:SetBlendMode(Turbine.UI.BlendMode.AlphaBlend);
 	
 	-- list vertical scroll bar        
@@ -330,7 +330,7 @@ function CombatAnalysisComboBoxInstance:MouseEnter(args)
 	local text = self.label:GetText();
 	self.label:SetText(text or "");
 	
-	self.arrow:SetBackground("CombatAnalysisGroup/Resources/dropdown_arrow_"..(self.open and "open_rollover" or "closed_rollover")..".tga");
+	self.arrow:SetBackground("TumbaAnalysis/Resources/dropdown_arrow_"..(self.open and "open_rollover" or "closed_rollover")..".tga");
 end
 
 function CombatAnalysisComboBoxInstance:MouseLeave(args)
@@ -343,7 +343,7 @@ function CombatAnalysisComboBoxInstance:MouseLeave(args)
 	local text = self.label:GetText();
 	self.label:SetText(text or "");
 	
-	self.arrow:SetBackground("CombatAnalysisGroup/Resources/dropdown_arrow_"..(self.open and "open" or "closed")..".tga");
+	self.arrow:SetBackground("TumbaAnalysis/Resources/dropdown_arrow_"..(self.open and "open" or "closed")..".tga");
 end
 
 function CombatAnalysisComboBoxInstance:MouseDown(args)
@@ -382,7 +382,7 @@ function CombatAnalysisComboBoxInstance:OpenDropDown()
 	if ((itemCount == 0) or self.open) then return end
 	
 	self.open = true;
-	self.arrow:SetBackground("CombatAnalysisGroup/Resources/dropdown_arrow_open_rollover.tga");
+	self.arrow:SetBackground("TumbaAnalysis/Resources/dropdown_arrow_open_rollover.tga");
 	
 	local x,y = WindowManager.GetPositionOnScreen(self);
 	local w = self:GetWidth();
@@ -493,7 +493,7 @@ function CombatAnalysisComboBoxInstance:CloseDropDown()
 	self.open = false;
 	
 	self.dropDownWindow:SetVisible(false);
-	self.arrow:SetBackground("CombatAnalysisGroup/Resources/dropdown_arrow_closed_rollover.tga");
+	self.arrow:SetBackground("TumbaAnalysis/Resources/dropdown_arrow_closed_rollover.tga");
 end
 
 -- add/remove items
@@ -560,7 +560,7 @@ end
 function CombatAnalysisComboBoxInstance:AddItem(text,value,top)
 	-- if the list was previously empty, update the arrow icon
 	if self.listBox:GetItemCount() == 0 then
-		self.arrow:SetBackground("CombatAnalysisGroup/Resources/dropdown_arrow_closed.tga");
+		self.arrow:SetBackground("TumbaAnalysis/Resources/dropdown_arrow_closed.tga");
 	end
 	
 	local listItem = self:CreateItem(text,value,top);
@@ -629,7 +629,7 @@ function CombatAnalysisComboBoxInstance:RemoveItem(value)
 	
 	-- if the list is now empty, update the arrow icon
 	if self.listBox:GetItemCount() == 0 then
-		self.arrow:SetBackground("CombatAnalysisGroup/Resources/dropdown_arrow_closed_Ghosted.tga");
+		self.arrow:SetBackground("TumbaAnalysis/Resources/dropdown_arrow_closed_Ghosted.tga");
 	end
 	
 	self:LayoutDropDown();
@@ -644,7 +644,7 @@ function CombatAnalysisComboBoxInstance:Clear()
 		self.listBox:RemoveItemAt(1);
 	end
 	-- reset arrow icon
-	self.arrow:SetBackground("CombatAnalysisGroup/Resources/dropdown_arrow_closed_Ghosted.tga");
+	self.arrow:SetBackground("TumbaAnalysis/Resources/dropdown_arrow_closed_Ghosted.tga");
 	
 	self:CloseDropDown();
 	-- NB: A selection change event is not fired on a Clear

@@ -1185,7 +1185,7 @@ function _G.AddSkillInfo(skillType, skillInfo)
   -- Debuffs
   elseif (skillType == "Debuff") then
     debuffs[skillInfo.skillName] = {ca = skillInfo.ca, bb = skillInfo.bb, removalOnly = skillInfo.removalOnly,
-        icon = "CombatAnalysisGroup/Resources/DebuffIcons/"..(skillInfo.iconName ~= nil and skillInfo.iconName or "default.tga"), toggleSkill = skillInfo.toggleSkill,
+        icon = "TumbaAnalysis/Resources/DebuffIcons/"..(skillInfo.iconName ~= nil and skillInfo.iconName or "default.tga"), toggleSkill = skillInfo.toggleSkill,
         overwrites = Misc.TableCopy(skillInfo.overwrites), conflicts = Misc.TableCopy(skillInfo.conflicts), buffEffects = Misc.TableCopy(skillInfo.buffEffects)};
     
     for _,applicationInfo in ipairs(skillInfo.appliedBy) do
@@ -1195,7 +1195,7 @@ function _G.AddSkillInfo(skillType, skillInfo)
   -- CC
   else
     cc[skillInfo.skillName] = {removalOnly = skillInfo.removalOnly,
-        icon = "CombatAnalysisGroup/Resources/DebuffIcons/"..(skillInfo.iconName ~= nil and skillInfo.iconName or "default.tga"), toggleSkill = skillInfo.toggleSkill,
+        icon = "TumbaAnalysis/Resources/DebuffIcons/"..(skillInfo.iconName ~= nil and skillInfo.iconName or "default.tga"), toggleSkill = skillInfo.toggleSkill,
         overwrites = Misc.TableCopy(skillInfo.overwrites), conflicts = Misc.TableCopy(skillInfo.conflicts), buffEffects = Misc.TableCopy(skillInfo.buffEffects)};
     
     for _,applicationInfo in ipairs(skillInfo.appliedBy) do
@@ -1766,13 +1766,13 @@ end
 function Traits.UpdateIcon(buffInfo,newIcon)
   -- first attempt to load in the icon
   local testControl = Turbine.UI.Control();
-  local success = (newIcon ~= "" and pcall(Turbine.UI.Control.SetBackground,testControl,"CombatAnalysisGroup/Resources/DebuffIcons/"..newIcon));
+  local success = (newIcon ~= "" and pcall(Turbine.UI.Control.SetBackground,testControl,"TumbaAnalysis/Resources/DebuffIcons/"..newIcon));
   testControl = nil;
   
   if (not success) then return false, "Unable to load icon" end
   
   buffInfo.iconName = newIcon;
-  debuffs[buffInfo.skillName].icon = "CombatAnalysisGroup/Resources/DebuffIcons/"..newIcon;
+  debuffs[buffInfo.skillName].icon = "TumbaAnalysis/Resources/DebuffIcons/"..newIcon;
   
   SaveTraits();
   

@@ -95,7 +95,7 @@ function CombatAnalysisWindow:Constructor(windowSet,showBackground,backgroundOpa
 	self.cutOff:SetZOrder(-1);
 	self.cutOff:SetSize(15,26);
 	self.cutOff:SetMouseVisible(true);
-	self.cutOff:SetBackground("CombatAnalysisGroup/Resources/cutoff.tga");
+	self.cutOff:SetBackground("TumbaAnalysis/Resources/cutoff.tga");
 	self.cutOff:SetBlendMode(Turbine.UI.BlendMode.AlphaBlend);
 	self.cutOff.MouseDown = function(sender,args) self:MouseDown(args) end
 	self.cutOff.MouseUp = function(sender,args) self:MouseUp(args) end
@@ -127,7 +127,7 @@ function CombatAnalysisWindow:Constructor(windowSet,showBackground,backgroundOpa
 	self.resizeIcon:SetZOrder(2);
 	self.resizeIcon:SetMouseVisible(false);
 	self.resizeIcon:SetBlendMode(Turbine.UI.BlendMode.AlphaBlend);
-	self.resizeIcon:SetBackground("CombatAnalysisGroup/Resources/chat_resize_widget.tga");
+	self.resizeIcon:SetBackground("TumbaAnalysis/Resources/chat_resize_widget.tga");
 	if not showBottomRightIcon then self.resizeIcon:SetVisible(false) end
 	
 	-- top left resize arrow

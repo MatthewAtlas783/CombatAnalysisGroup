@@ -187,7 +187,7 @@ local restoreV420Settings = function()
  
 end
 
--- CombatAnalysisGroup: add the new groupTab and its own dedicated window
+-- TumbaAnalysis: add the new groupTab and its own dedicated window
 local restoreVGroupTabSettings = function()
   -- find an unused window id (above any existing window/stats window ids)
   local maxWindowId = 0;
@@ -350,7 +350,7 @@ local interpretSettings = function ()
     end
     -- update the info button display
     if (not statOverviewTab.panel.isBuffTab and tabState["state"]["statsWindowID"] == nil) then
-      statOverviewTab.panel.infoButton:SetBackground("CombatAnalysisGroup/Resources/gears.tga");
+      statOverviewTab.panel.infoButton:SetBackground("TumbaAnalysis/Resources/gears.tga");
     end
     -- add the tab to its relevant window
 		if (tabState["state"]["windowID"] ~= nil) then windows[tabState["state"]["windowID"]]:AddTab(statOverviewTab,tabState["state"]["selected"],nil,true) end
@@ -405,7 +405,7 @@ local interpretSettings = function ()
   uiMenuPanel.tabsSubMenuPanel:SelectTab(dmgTab);
   
   -- show tutorial hints
-  if (not settings.combatAnalysisLogoTutorialViewed) then TutorialHint(L.LogoTitle, L.LogoMessage, "CombatAnalysisGroup/Resources/logo.tga") end
+  if (not settings.combatAnalysisLogoTutorialViewed) then TutorialHint(L.LogoTitle, L.LogoMessage, "TumbaAnalysis/Resources/logo.tga") end
   
 	-- now that settings have been restored, encode them all for quick saving later on
 	EncodeNumbers(settings);
@@ -508,7 +508,7 @@ function _G.LoadSettings()
 		settings.versionNo = versionNo;
 	end
 
-  -- CombatAnalysisGroup: add the new groupTab + its dedicated window if missing.
+  -- TumbaAnalysis: add the new groupTab + its dedicated window if missing.
   -- Presence-gated (not version-gated) so it still runs if LOTRO cached the old plugin version,
   -- and placed outside the upToDate block so existing-version settings files still get the new tab.
   if (type(settings) == "table" and (settings.tabStates == nil or settings.tabStates["groupTab"] == nil)) then

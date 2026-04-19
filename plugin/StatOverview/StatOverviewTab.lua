@@ -261,7 +261,7 @@ function StatOverviewTab:SetShowStats(newShowStats,loadFromSettings)
 	local oldShowStats = self.showStats;
 	self.showStats = newShowStats;
 	
-	self.panel.infoButton:SetBackground("CombatAnalysisGroup/Resources/info_button"..(self.showStats == 3 and "_border" or (self.showStats == 2 and "_quarter_border" or ""))..".tga");
+	self.panel.infoButton:SetBackground("TumbaAnalysis/Resources/info_button"..(self.showStats == 3 and "_border" or (self.showStats == 2 and "_quarter_border" or ""))..".tga");
 	
 	if (self.statsPanel.window ~= nil) then
 		if (self.statsPanel.window.locked == nil) then
@@ -276,7 +276,7 @@ function StatOverviewTab:SetShowStats(newShowStats,loadFromSettings)
 		for _,panel in ipairs(self.statsPanel.window.panels) do
 			if (panel.tab ~= self) then
 				panel.tab.showStats = self.showStats;
-				panel.tab.panel.infoButton:SetBackground("CombatAnalysisGroup/Resources/info_button"..(self.showStats == 3 and "_border" or (self.showStats == 2 and "_quarter_border" or ""))..".tga");
+				panel.tab.panel.infoButton:SetBackground("TumbaAnalysis/Resources/info_button"..(self.showStats == 3 and "_border" or (self.showStats == 2 and "_quarter_border" or ""))..".tga");
 			end
 			if (not loadFromSettings) then
 				panel.tab:SaveState();

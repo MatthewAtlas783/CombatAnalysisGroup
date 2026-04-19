@@ -1,11 +1,11 @@
-import "CombatAnalysisGroup.Data.CombatElements"
-import "CombatAnalysisGroup.Data.SummaryData"
+import "TumbaAnalysis.Data.CombatElements"
+import "TumbaAnalysis.Data.SummaryData"
 
-import "CombatAnalysisGroup.Data.RunningBuffs"
-import "CombatAnalysisGroup.Data.RunningDebuffs"
+import "TumbaAnalysis.Data.RunningBuffs"
+import "TumbaAnalysis.Data.RunningDebuffs"
 
-import "CombatAnalysisGroup.Data.Mob"
-import "CombatAnalysisGroup.Data.Restore"
-import "CombatAnalysisGroup.Data.Encounter"
+import "TumbaAnalysis.Data.Mob"
+import "TumbaAnalysis.Data.Restore"
+import "TumbaAnalysis.Data.Encounter"
 
-import "CombatAnalysisGroup.Data.CombatData"
+import "TumbaAnalysis.Data.CombatData"

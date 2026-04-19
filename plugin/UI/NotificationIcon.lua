@@ -36,7 +36,7 @@ function FileNotificationIcon:Constructor()
 		
 		if (count ~= self.count) then
 			self.count = count;
-			self.icon:SetBackground("CombatAnalysisGroup/Resources/load_animation_"..(self.count == (FileNotificationIcon.frames+1) and 1 or self.count+1)..".tga");
+			self.icon:SetBackground("TumbaAnalysis/Resources/load_animation_"..(self.count == (FileNotificationIcon.frames+1) and 1 or self.count+1)..".tga");
 		end
 	end
 	

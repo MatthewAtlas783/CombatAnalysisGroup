@@ -31,7 +31,7 @@ function AddRemove:Constructor(addText, removeText, addGap, removeGap, removeEna
   self.addIcon:SetPosition(0,0);
   self.addIcon:SetSize(15,15);
   self.addIcon:SetBlendMode(Turbine.UI.BlendMode.AlphaBlend);
-  self.addIcon:SetBackground("CombatAnalysisGroup/Resources/add_icon.tga");
+  self.addIcon:SetBackground("TumbaAnalysis/Resources/add_icon.tga");
   self.addIcon:SetMouseVisible(false);
   
   self.addLabel = MenuLabel(self.addControl,0,20+addGap-5,15);
@@ -52,7 +52,7 @@ function AddRemove:Constructor(addText, removeText, addGap, removeGap, removeEna
     
     if (self.removeControl.disabled) then self.removeLabel:SetFontStyle(Turbine.UI.FontStyle.None) end
     self.removeLabel:SetForeColor(self.removeControl.disabled and LabelledComboBox.DisabledColor or control2LightColor);
-    self.removeIcon:SetBackground("CombatAnalysisGroup/Resources/remove_icon"..(self.removeControl.disabled and "_disabled" or "")..".tga");
+    self.removeIcon:SetBackground("TumbaAnalysis/Resources/remove_icon"..(self.removeControl.disabled and "_disabled" or "")..".tga");
   end
   
   self.removeControl.MouseEnter = function(sender,args)
@@ -73,7 +73,7 @@ function AddRemove:Constructor(addText, removeText, addGap, removeGap, removeEna
   self.removeIcon:SetPosition(0,1);
   self.removeIcon:SetSize(15,15);
   self.removeIcon:SetBlendMode(Turbine.UI.BlendMode.AlphaBlend);
-  self.removeIcon:SetBackground("CombatAnalysisGroup/Resources/remove_icon"..(self.removeControl.disabled and "_disabled" or "")..".tga");
+  self.removeIcon:SetBackground("TumbaAnalysis/Resources/remove_icon"..(self.removeControl.disabled and "_disabled" or "")..".tga");
   self.removeIcon:SetMouseVisible(false);
   
   self.removeLabel = MenuLabel(self.removeControl,0,20+removeGap-5,15);

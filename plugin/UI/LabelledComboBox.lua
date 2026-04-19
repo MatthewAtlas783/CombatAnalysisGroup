@@ -91,7 +91,7 @@ function LabelledComboBox:Constructor(window,text,width,textOrientation,textAlig
     self.arrow:SetSize(16,16);
     self.arrow:SetZOrder(20);
     self.arrow:SetBlendMode(Turbine.UI.BlendMode.AlphaBlend);    
-    self.arrow:SetBackground("CombatAnalysisGroup/Resources/dropdown_arrow_closed.tga");
+    self.arrow:SetBackground("TumbaAnalysis/Resources/dropdown_arrow_closed.tga");
     self.arrow:SetMouseVisible(false);
     
     -- drop down window
@@ -132,7 +132,7 @@ function LabelledComboBox:Constructor(window,text,width,textOrientation,textAlig
       self.label:SetForeColor(self.labelColor);
       self.label:SetText(self.label:GetText());
 
-      self.arrow:SetBackground("CombatAnalysisGroup/Resources/dropdown_arrow_"..(self.open and "open_rollover" or "closed_rollover")..".tga");
+      self.arrow:SetBackground("TumbaAnalysis/Resources/dropdown_arrow_"..(self.open and "open_rollover" or "closed_rollover")..".tga");
     end
 
     self.dropDownBox.MouseLeave = function(sender,args)
@@ -144,7 +144,7 @@ function LabelledComboBox:Constructor(window,text,width,textOrientation,textAlig
       if (self.open) then self.label:SetForeColor(self.labelSelectedColor) end
       self.label:SetText(self.label:GetText());
       
-      self.arrow:SetBackground("CombatAnalysisGroup/Resources/dropdown_arrow_"..(self.open and "open" or "closed")..".tga");
+      self.arrow:SetBackground("TumbaAnalysis/Resources/dropdown_arrow_"..(self.open and "open" or "closed")..".tga");
     end
     
     self.dropDownBox.MouseDown = function(sender,args)
@@ -338,11 +338,11 @@ function LabelledComboBox:SetEnabled(enabled)
     Turbine.UI.Control.SetEnabled(self, enabled);
     if (enabled) then
         self.label:SetForeColor(self.labelColor);
-        self.arrow:SetBackground("CombatAnalysisGroup/Resources/dropdown_arrow_closed.tga");
+        self.arrow:SetBackground("TumbaAnalysis/Resources/dropdown_arrow_closed.tga");
     else
         self:CloseDropDown();
         self.label:SetForeColor(LabelledComboBox.DisabledColor);
-        self.arrow:SetBackground("CombatAnalysisGroup/Resources/dropdown_arrow_closed_ghosted.tga");
+        self.arrow:SetBackground("TumbaAnalysis/Resources/dropdown_arrow_closed_ghosted.tga");
     end
 end
 
@@ -351,7 +351,7 @@ function LabelledComboBox:OpenDropDown()
     if ((itemCount > 0) and not (self.open)) then
         self.open = true;
         self.label:SetForeColor(self.labelSelectedColor);
-        self.arrow:SetBackground("CombatAnalysisGroup/Resources/dropdown_arrow_open_rollover.tga");
+        self.arrow:SetBackground("TumbaAnalysis/Resources/dropdown_arrow_open_rollover.tga");
         local width,height = self:GetSize();
         
         -- max size
@@ -406,6 +406,6 @@ function LabelledComboBox:CloseDropDown()
         self.open = false;
         self.dropDownWindow:SetVisible(false);
         self.label:SetForeColor(self.labelColor);
-        self.arrow:SetBackground("CombatAnalysisGroup/Resources/dropdown_arrow_closed_rollover.tga");
+        self.arrow:SetBackground("TumbaAnalysis/Resources/dropdown_arrow_closed_rollover.tga");
     end
 end

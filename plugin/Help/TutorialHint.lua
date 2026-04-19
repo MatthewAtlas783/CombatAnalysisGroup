@@ -22,7 +22,7 @@ function TutorialHint:Constructor(title, text, icon)
   self.tutorialIcon:SetMouseVisible(false);
   self.tutorialIcon:SetPosition(15,35);
   self.tutorialIcon:SetSize(38,38);
-  self.tutorialIcon:SetBackground("CombatAnalysisGroup/Resources/tutorial_icon.tga");
+  self.tutorialIcon:SetBackground("TumbaAnalysis/Resources/tutorial_icon.tga");
   self.tutorialIcon:SetBlendMode(Turbine.UI.BlendMode.AlphaBlend);
   
   self.titleText = Turbine.UI.Label();

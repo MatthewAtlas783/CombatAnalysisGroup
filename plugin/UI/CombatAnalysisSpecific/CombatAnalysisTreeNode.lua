@@ -28,7 +28,7 @@ function CombatAnalysisTreeNode:Constructor(panel,depth,text,hasChildren)
 	self:SetHeight(18);
 	
 	if (self.depth == 1) then
-		self:SetBackground("CombatAnalysisGroup/Resources/box_treelist_header_Gray.tga");
+		self:SetBackground("TumbaAnalysis/Resources/box_treelist_header_Gray.tga");
 	end
 	
 	if (hasChildren) then

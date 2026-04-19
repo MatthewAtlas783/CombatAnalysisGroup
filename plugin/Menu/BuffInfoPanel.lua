@@ -178,7 +178,7 @@ function BuffInfoPanel:Constructor(node,width,controlPadding,panelPadding,innerP
   self.background:SetParent(self.panel);
   self.background:SetPosition(2,2);
   self.background:SetSize(width-2*self.panelPadding-2-10-4,0);
-  self.background:SetBackground("CombatAnalysisGroup/Resources/buff_panel_background_selected.tga");
+  self.background:SetBackground("TumbaAnalysis/Resources/buff_panel_background_selected.tga");
   self.background:SetMouseVisible(false);
 end
 
@@ -477,7 +477,7 @@ function BuffInfoPanel:InsertItem(position, appliedBy, skillName, critsOnly, del
   item.background:SetParent(item);
   item.background:SetPosition(1,1);
   item.background:SetSize(self.width-2*self.panelPadding-2-10-4,self.itemHeight-1);
-  item.background:SetBackground("CombatAnalysisGroup/Resources/buff_panel_background.tga");
+  item.background:SetBackground("TumbaAnalysis/Resources/buff_panel_background.tga");
   item.background:SetMouseVisible(false);
   
   item.label = Turbine.UI.Label();
@@ -801,7 +801,7 @@ function BuffInfoPanel:InsertItem(position, appliedBy, skillName, critsOnly, del
   
   item.SetSelected = function(sender,selected)
     item:SetZOrder(math.max(item:GetZOrder(),selected and 1 or 0));
-    item.background:SetBackground("CombatAnalysisGroup/Resources/buff_panel_background"..(selected and "_selected" or "")..".tga");
+    item.background:SetBackground("TumbaAnalysis/Resources/buff_panel_background"..(selected and "_selected" or "")..".tga");
     
     if (item:GetZOrder() < 2) then
       if (item.skillTextBox ~= nil) then item.skillTextBox:SetBackColor(item.skillTextBox.error and Menu.errorColor or (selected and Turbine.UI.Color(0.3,0.15,0.2) or blueBorderColor)) end

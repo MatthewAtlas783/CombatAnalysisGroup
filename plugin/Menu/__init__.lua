@@ -1,41 +1,41 @@
 
 Menu.selectionBorder = 2;
 
-import "CombatAnalysisGroup.Menu.AddIcon"
-import "CombatAnalysisGroup.Menu.InsertIcon"
-import "CombatAnalysisGroup.Menu.RemoveIcon"
+import "TumbaAnalysis.Menu.AddIcon"
+import "TumbaAnalysis.Menu.InsertIcon"
+import "TumbaAnalysis.Menu.RemoveIcon"
 
-import "CombatAnalysisGroup.Menu.TabIcon"
-import "CombatAnalysisGroup.Menu.WindowIcon"
+import "TumbaAnalysis.Menu.TabIcon"
+import "TumbaAnalysis.Menu.WindowIcon"
 
-import "CombatAnalysisGroup.Menu.TabsAndWindowsBox"
+import "TumbaAnalysis.Menu.TabsAndWindowsBox"
 
 _G.tabsAndWindowsBox = TabsAndWindowsBox();
 _G.statsWindowsBox = TabsAndWindowsBox(true);
 
-import "CombatAnalysisGroup.Menu.GeneralMenuPanel"
+import "TumbaAnalysis.Menu.GeneralMenuPanel"
 
-import "CombatAnalysisGroup.Menu.TabsSubMenuPanel"
-import "CombatAnalysisGroup.Menu.WindowsSubMenuPanel"
-import "CombatAnalysisGroup.Menu.StatsWindowsSubMenuPanel"
+import "TumbaAnalysis.Menu.TabsSubMenuPanel"
+import "TumbaAnalysis.Menu.WindowsSubMenuPanel"
+import "TumbaAnalysis.Menu.StatsWindowsSubMenuPanel"
 
-import "CombatAnalysisGroup.Menu.UIMenuPanel"
+import "TumbaAnalysis.Menu.UIMenuPanel"
 
 Menu.errorColor = Turbine.UI.Color(1,0.3,0);
 
-import "CombatAnalysisGroup.Menu.AddRemove"
-import "CombatAnalysisGroup.Menu.BuffInfoPanel"
+import "TumbaAnalysis.Menu.AddRemove"
+import "TumbaAnalysis.Menu.BuffInfoPanel"
 
-import "CombatAnalysisGroup.Menu.BuffPanelNode"
-import "CombatAnalysisGroup.Menu.BuffPanelTitleNode"
+import "TumbaAnalysis.Menu.BuffPanelNode"
+import "TumbaAnalysis.Menu.BuffPanelTitleNode"
 
-import "CombatAnalysisGroup.Menu.TraitColorPicker"
-import "CombatAnalysisGroup.Menu.AddConfigurationDialog"
+import "TumbaAnalysis.Menu.TraitColorPicker"
+import "TumbaAnalysis.Menu.AddConfigurationDialog"
 
-import "CombatAnalysisGroup.Menu.BuffsSubMenuPanel"
+import "TumbaAnalysis.Menu.BuffsSubMenuPanel"
 
-import "CombatAnalysisGroup.Menu.BuffsMenuPanel"
+import "TumbaAnalysis.Menu.BuffsMenuPanel"
 
-import "CombatAnalysisGroup.Menu.AboutMenuPanel"
+import "TumbaAnalysis.Menu.AboutMenuPanel"
 
-import "CombatAnalysisGroup.Menu.Menu"
+import "TumbaAnalysis.Menu.Menu"

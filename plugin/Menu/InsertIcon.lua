@@ -12,7 +12,7 @@ function InsertIcon:Constructor()
   self.icon:SetPosition(0,7);
   self.icon:SetSize(12,11);
   self.icon:SetBlendMode(Turbine.UI.BlendMode.AlphaBlend);
-  self.icon:SetBackground("CombatAnalysisGroup/Resources/insert_icon.tga");
+  self.icon:SetBackground("TumbaAnalysis/Resources/insert_icon.tga");
   
   self.text = Turbine.UI.Label();
   self.text:SetParent(self);

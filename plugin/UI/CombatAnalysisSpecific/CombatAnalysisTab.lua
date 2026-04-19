@@ -35,7 +35,7 @@ function CombatAnalysisTab:Constructor(tabSet,text,menu,panel)
 	self.w:SetParent(self);
 	self.w:SetSize(13,28);
 	self.w:SetMouseVisible(false);
-	self.w:SetBackground("CombatAnalysisGroup/Resources/chat_tab_tier1_middle_back_w.tga");
+	self.w:SetBackground("TumbaAnalysis/Resources/chat_tab_tier1_middle_back_w.tga");
 	self.w:SetBlendMode(Turbine.UI.BlendMode.AlphaBlend);
 	
 	-- north (center) of tab
@@ -44,7 +44,7 @@ function CombatAnalysisTab:Constructor(tabSet,text,menu,panel)
 	self.n:SetSize(CombatAnalysisTabbedWindow.tabWidth-26,28);
 	self.n:SetPosition(13,0);
 	self.n:SetMouseVisible(false);
-	self.n:SetBackground("CombatAnalysisGroup/Resources/chat_tab_tier1_middle_back_n.tga");
+	self.n:SetBackground("TumbaAnalysis/Resources/chat_tab_tier1_middle_back_n.tga");
 	self.n:SetBlendMode(Turbine.UI.BlendMode.AlphaBlend);
 	
 	-- east edge of tab
@@ -53,7 +53,7 @@ function CombatAnalysisTab:Constructor(tabSet,text,menu,panel)
 	self.e:SetSize(13,28);
 	self.e:SetPosition(CombatAnalysisTabbedWindow.tabWidth-13,0);
 	self.e:SetMouseVisible(false);
-	self.e:SetBackground("CombatAnalysisGroup/Resources/chat_tab_tier1_middle_back_e.tga");
+	self.e:SetBackground("TumbaAnalysis/Resources/chat_tab_tier1_middle_back_e.tga");
 	self.e:SetBlendMode(Turbine.UI.BlendMode.AlphaBlend);
 	
 	-- tab label
@@ -80,7 +80,7 @@ function CombatAnalysisTab:Constructor(tabSet,text,menu,panel)
 	self.dragWindow:SetZOrder(1);
 	self.dragWindow:SetSize(204,28);
 	self.dragWindow:SetMouseVisible(false);
-	self.dragWindow:SetBackground("CombatAnalysisGroup/Resources/chat_tab_tier1_middle_front_w.tga");
+	self.dragWindow:SetBackground("TumbaAnalysis/Resources/chat_tab_tier1_middle_front_w.tga");
 	
 	-- drag window label
 	local label = Turbine.UI.Label();
@@ -346,29 +346,29 @@ function CombatAnalysisTab:SetHover(hover)
 	if (self.selected) then return end
 
 	if (hover) then
-		self.w:SetBackground("CombatAnalysisGroup/Resources/chat_tab_tier1_middle_front_w.tga");
-		self.n:SetBackground("CombatAnalysisGroup/Resources/chat_tab_tier1_middle_front_n.tga");
-		self.e:SetBackground("CombatAnalysisGroup/Resources/chat_tab_tier1_middle_front_e.tga");
+		self.w:SetBackground("TumbaAnalysis/Resources/chat_tab_tier1_middle_front_w.tga");
+		self.n:SetBackground("TumbaAnalysis/Resources/chat_tab_tier1_middle_front_n.tga");
+		self.e:SetBackground("TumbaAnalysis/Resources/chat_tab_tier1_middle_front_e.tga");
 		self.label:SetForeColor(controlSelectedColor);
 	else
-		self.w:SetBackground("CombatAnalysisGroup/Resources/chat_tab_tier1_middle_back_w.tga");
-		self.n:SetBackground("CombatAnalysisGroup/Resources/chat_tab_tier1_middle_back_n.tga");
-		self.e:SetBackground("CombatAnalysisGroup/Resources/chat_tab_tier1_middle_back_e.tga");
+		self.w:SetBackground("TumbaAnalysis/Resources/chat_tab_tier1_middle_back_w.tga");
+		self.n:SetBackground("TumbaAnalysis/Resources/chat_tab_tier1_middle_back_n.tga");
+		self.e:SetBackground("TumbaAnalysis/Resources/chat_tab_tier1_middle_back_e.tga");
 		self.label:SetForeColor(controlColor);
 	end
 end
 
 function CombatAnalysisTab:SetSelected(selected)
 	if (selected) then
-		self.w:SetBackground("CombatAnalysisGroup/Resources/chat_tab_tier1_middle_front_w.tga");
-		self.n:SetBackground("CombatAnalysisGroup/Resources/chat_tab_tier1_middle_front_n.tga");
-		self.e:SetBackground("CombatAnalysisGroup/Resources/chat_tab_tier1_middle_front_e.tga");
+		self.w:SetBackground("TumbaAnalysis/Resources/chat_tab_tier1_middle_front_w.tga");
+		self.n:SetBackground("TumbaAnalysis/Resources/chat_tab_tier1_middle_front_n.tga");
+		self.e:SetBackground("TumbaAnalysis/Resources/chat_tab_tier1_middle_front_e.tga");
 		self.label:SetText(self.text);
 		self.label:SetForeColor(controlSelectedColor);
 	else
-		self.w:SetBackground("CombatAnalysisGroup/Resources/chat_tab_tier1_middle_back_w.tga");
-		self.n:SetBackground("CombatAnalysisGroup/Resources/chat_tab_tier1_middle_back_n.tga");
-		self.e:SetBackground("CombatAnalysisGroup/Resources/chat_tab_tier1_middle_back_e.tga");
+		self.w:SetBackground("TumbaAnalysis/Resources/chat_tab_tier1_middle_back_w.tga");
+		self.n:SetBackground("TumbaAnalysis/Resources/chat_tab_tier1_middle_back_n.tga");
+		self.e:SetBackground("TumbaAnalysis/Resources/chat_tab_tier1_middle_back_e.tga");
 		self.label:SetText(string.lower(self.text));
 		self.label:SetForeColor(controlColor);
 	end

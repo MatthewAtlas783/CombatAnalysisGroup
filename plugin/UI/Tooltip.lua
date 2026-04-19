@@ -205,56 +205,56 @@ function Tooltip:Layout(size)
     self.topLeft:SetSize(19, 19);
     self.topLeft:SetMouseVisible(false);
     self.topLeft:SetBlendMode(Turbine.UI.BlendMode.AlphaBlend);
-    self.topLeft:SetBackground("CombatAnalysisGroup/Resources/basepanel_topleft.tga");
+    self.topLeft:SetBackground("TumbaAnalysis/Resources/basepanel_topleft.tga");
     
     self.topRight = Turbine.UI.Control();
     self.topRight:SetParent(self);
     self.topRight:SetSize(19, 19);
     self.topRight:SetMouseVisible(false);
     self.topRight:SetBlendMode(Turbine.UI.BlendMode.AlphaBlend);
-    self.topRight:SetBackground("CombatAnalysisGroup/Resources/basepanel_topright.tga");
+    self.topRight:SetBackground("TumbaAnalysis/Resources/basepanel_topright.tga");
     
     self.bottomLeft = Turbine.UI.Control();
     self.bottomLeft:SetParent(self);
     self.bottomLeft:SetSize(19, 19);
     self.bottomLeft:SetMouseVisible(false);
     self.bottomLeft:SetBlendMode(Turbine.UI.BlendMode.AlphaBlend);
-    self.bottomLeft:SetBackground("CombatAnalysisGroup/Resources/basepanel_bottomleft.tga");
+    self.bottomLeft:SetBackground("TumbaAnalysis/Resources/basepanel_bottomleft.tga");
     
     self.bottomRight = Turbine.UI.Control();
     self.bottomRight:SetParent(self);
     self.bottomRight:SetSize(19, 19);
     self.bottomRight:SetMouseVisible(false);
     self.bottomRight:SetBlendMode(Turbine.UI.BlendMode.AlphaBlend);
-    self.bottomRight:SetBackground("CombatAnalysisGroup/Resources/basepanel_bottomright.tga");
+    self.bottomRight:SetBackground("TumbaAnalysis/Resources/basepanel_bottomright.tga");
     
     self.top = Turbine.UI.Control();
     self.top:SetParent(self);
     self.top:SetSize(0, 3);
     self.top:SetMouseVisible(false);
     self.top:SetBlendMode(Turbine.UI.BlendMode.AlphaBlend);
-    self.top:SetBackground("CombatAnalysisGroup/Resources/basepanel_topmid.tga");
+    self.top:SetBackground("TumbaAnalysis/Resources/basepanel_topmid.tga");
     
     self.left = Turbine.UI.Control();
     self.left:SetParent(self);
     self.left:SetSize(3, 0);
     self.left:SetMouseVisible(false);
     self.left:SetBlendMode(Turbine.UI.BlendMode.AlphaBlend);
-    self.left:SetBackground("CombatAnalysisGroup/Resources/basepanel_midleft.tga");
+    self.left:SetBackground("TumbaAnalysis/Resources/basepanel_midleft.tga");
     
     self.right = Turbine.UI.Control();
     self.right:SetParent(self);
     self.right:SetSize(3, 0);
     self.right:SetMouseVisible(false);
     self.right:SetBlendMode(Turbine.UI.BlendMode.AlphaBlend);
-    self.right:SetBackground("CombatAnalysisGroup/Resources/basepanel_midright.tga");
+    self.right:SetBackground("TumbaAnalysis/Resources/basepanel_midright.tga");
     
     self.bottom = Turbine.UI.Control();
     self.bottom:SetParent(self);
     self.bottom:SetSize(0, 3);
     self.bottom:SetMouseVisible(false);
     self.bottom:SetBlendMode(Turbine.UI.BlendMode.AlphaBlend);
-    self.bottom:SetBackground("CombatAnalysisGroup/Resources/basepanel_bottommid.tga");
+    self.bottom:SetBackground("TumbaAnalysis/Resources/basepanel_bottommid.tga");
     
     -- special case to prevent the shadows on the corners from overlapping
     if (self.height < 38) then

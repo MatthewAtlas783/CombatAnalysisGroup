@@ -106,15 +106,15 @@ function CombatAnalysisTabbedWindow:Constructor(windowSet,showBackground,backgro
 	self.leftScrollButton:SetPosition(0,15);
 	self.leftScrollButton:SetZOrder(1);
 	self.leftScrollButton:SetBlendMode(Turbine.UI.BlendMode.AlphaBlend);
-	self.leftScrollButton:SetBackground("CombatAnalysisGroup/Resources/scrollbar_10H_downarrow.tga");
+	self.leftScrollButton:SetBackground("TumbaAnalysis/Resources/scrollbar_10H_downarrow.tga");
 	self.leftScrollButton.MouseDown = function(sender,args)
 		WindowManager.MouseWasPressed(self);
 	end
 	self.leftScrollButton.MouseEnter = function(sender, args)
-		self.leftScrollButton:SetBackground("CombatAnalysisGroup/Resources/scrollbar_10H_downarrow_mouseover.tga");
+		self.leftScrollButton:SetBackground("TumbaAnalysis/Resources/scrollbar_10H_downarrow_mouseover.tga");
 	end
 	self.leftScrollButton.MouseLeave = function(sender, args)
-		self.leftScrollButton:SetBackground("CombatAnalysisGroup/Resources/scrollbar_10H_downarrow.tga");
+		self.leftScrollButton:SetBackground("TumbaAnalysis/Resources/scrollbar_10H_downarrow.tga");
 	end
 	self.leftScrollButton.MouseClick = function(sender, args)
 		self:IncrementOffset(-(CombatAnalysisTabbedWindow.tabWidth+CombatAnalysisTabbedWindow.tabGap));
@@ -130,15 +130,15 @@ function CombatAnalysisTabbedWindow:Constructor(windowSet,showBackground,backgro
 	self.rightScrollButton:SetTop(15);
 	self.rightScrollButton:SetZOrder(1);
 	self.rightScrollButton:SetBlendMode(Turbine.UI.BlendMode.AlphaBlend);
-	self.rightScrollButton:SetBackground("CombatAnalysisGroup/Resources/scrollbar_10H_uparrow.tga");
+	self.rightScrollButton:SetBackground("TumbaAnalysis/Resources/scrollbar_10H_uparrow.tga");
 	self.rightScrollButton.MouseDown = function(sender,args)
 		WindowManager.MouseWasPressed(self);
 	end
 	self.rightScrollButton.MouseEnter = function(sender, args)
-		self.rightScrollButton:SetBackground("CombatAnalysisGroup/Resources/scrollbar_10H_uparrow_mouseover.tga");
+		self.rightScrollButton:SetBackground("TumbaAnalysis/Resources/scrollbar_10H_uparrow_mouseover.tga");
 	end
 	self.rightScrollButton.MouseLeave = function(sender, args)
-		self.rightScrollButton:SetBackground("CombatAnalysisGroup/Resources/scrollbar_10H_uparrow.tga");
+		self.rightScrollButton:SetBackground("TumbaAnalysis/Resources/scrollbar_10H_uparrow.tga");
 	end
 	self.rightScrollButton.MouseClick = function(sender, args)
 		self:IncrementOffset(CombatAnalysisTabbedWindow.tabWidth+CombatAnalysisTabbedWindow.tabGap);
@@ -169,7 +169,7 @@ function CombatAnalysisTabbedWindow:Constructor(windowSet,showBackground,backgro
 	self.tabPaneHighlight:SetPosition(CombatAnalysisWindow.border,0);
 	self.tabPaneHighlight:SetHeight(26);
 	self.tabPaneHighlight:SetMouseVisible(false);
-	self.tabPaneHighlight:SetBackground("CombatAnalysisGroup/Resources/chat_drag_back.tga");
+	self.tabPaneHighlight:SetBackground("TumbaAnalysis/Resources/chat_drag_back.tga");
 	self.tabPaneHighlight:SetVisible(false);
 	
 	if self.autoHideTabs then self:HideTabs() end

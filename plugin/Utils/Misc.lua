@@ -180,16 +180,16 @@ function Misc.ClassToIcon(class)
   if (class == "Hunter") then return 0x41007dea end
   if (class == "LoreMaster") then return 0x41007de9 end
   if (class == "Minstrel") then return 0x41007de6 end
-  if (class == "RuneKeeper") then return "CombatAnalysisGroup/Resources/runekeeper_icon_20.tga" end
-  if (class == "Warden") then return "CombatAnalysisGroup/Resources/warden_icon_20.tga" end
+  if (class == "RuneKeeper") then return "TumbaAnalysis/Resources/runekeeper_icon_20.tga" end
+  if (class == "Warden") then return "TumbaAnalysis/Resources/warden_icon_20.tga" end
   if (class == "BlackArrow") then return 0x41007def end
-  if (class == "Defiler") then return "CombatAnalysisGroup/Resources/defiler_icon_20.tga" end
+  if (class == "Defiler") then return "TumbaAnalysis/Resources/defiler_icon_20.tga" end
   if (class == "Reaver") then return 0x41007ded end
   if (class == "Stalker") then return 0x41007df1 end
   if (class == "WarLeader") then return 0x41007df0 end
   if (class == "Weaver") then return 0x41007dee end
-  if (class == "Beorning")then return "CombatAnalysisGroup/Resources/beorning_icon_20.tga" end
-  if (class == "Brawler")then return "CombatAnalysisGroup/Resources/Brawler_icon_20.tga" end
+  if (class == "Beorning")then return "TumbaAnalysis/Resources/beorning_icon_20.tga" end
+  if (class == "Brawler")then return "TumbaAnalysis/Resources/Brawler_icon_20.tga" end
 end
 
 

@@ -65,24 +65,24 @@ function StatOverviewStatsPanel:Constructor(tab,mainTitle,psTitle,showAvoids,sho
 	self.lockIcon:SetSize(20,19);
 	self.lockIcon:SetTop(math.max(0,math.ceil((CombatAnalysisWindow.titleBarHeight-19)/2)));
 	self.lockIcon:SetZOrder(2);
-	self.lockIcon:SetBackground("CombatAnalysisGroup/Resources/button_lock_highlight_normal.tga");
+	self.lockIcon:SetBackground("TumbaAnalysis/Resources/button_lock_highlight_normal.tga");
 	self.lockIcon:SetBlendMode(Turbine.UI.BlendMode.AlphaBlend);
 	self.lockIcon:SetMouseVisible(true);
 	
 	self.lockIcon.MouseEnter = function(sender, args)
-		self.lockIcon:SetBackground("CombatAnalysisGroup/Resources/button_lock_highlight_rollover.tga");
+		self.lockIcon:SetBackground("TumbaAnalysis/Resources/button_lock_highlight_rollover.tga");
 	end
 	self.lockIcon.MouseLeave = function(sender, args)
-		self.lockIcon:SetBackground("CombatAnalysisGroup/Resources/button_lock_highlight"..(self.lockIcon.pressed and "_rollover" or "_normal")..".tga");
+		self.lockIcon:SetBackground("TumbaAnalysis/Resources/button_lock_highlight"..(self.lockIcon.pressed and "_rollover" or "_normal")..".tga");
 	end
 	self.lockIcon.MouseDown = function(sender, args)
 		WindowManager.MouseWasPressed(self.window);
 		self.lockIcon.pressed = true;
-		self.lockIcon:SetBackground("CombatAnalysisGroup/Resources/button_lock_highlight_rollover.tga");
+		self.lockIcon:SetBackground("TumbaAnalysis/Resources/button_lock_highlight_rollover.tga");
 	end
 	self.lockIcon.MouseUp = function(sender, args)
 		self.lockIcon.pressed = false;
-		self.lockIcon:SetBackground("CombatAnalysisGroup/Resources/button_lock_highlight_normal.tga");
+		self.lockIcon:SetBackground("TumbaAnalysis/Resources/button_lock_highlight_normal.tga");
 	end
 	self.lockIcon.MouseClick = function(sender, args)
 		self.window:SetLocked(nil,nil,false);
@@ -193,14 +193,14 @@ function StatOverviewStatsPanel:Constructor(tab,mainTitle,psTitle,showAvoids,sho
 	self.arrow:SetSize(13,13);
 	self.arrow:SetZOrder(1);
 	self.arrow:SetBlendMode(Turbine.UI.BlendMode.AlphaBlend);
-	self.arrow:SetBackground("CombatAnalysisGroup/Resources/arrowdown_normal.tga");
+	self.arrow:SetBackground("TumbaAnalysis/Resources/arrowdown_normal.tga");
 	self.arrow:SetMouseVisible(false);
 	self.arrow.pressed = false;
 	
 	self.dataTitleBackground.MouseEnter = function(sender,args)
     statsMenu.mouse = true;
 		
-		self.arrow:SetBackground("CombatAnalysisGroup/Resources/arrowdown_"..(self.arrow.pressed or statsMenu.open and "pressed" or "rollover")..".tga");
+		self.arrow:SetBackground("TumbaAnalysis/Resources/arrowdown_"..(self.arrow.pressed or statsMenu.open and "pressed" or "rollover")..".tga");
 		self.dataTitle:SetForeColor(Turbine.UI.Color(1,0.97,0.6));
 		self.dataTitle:SetOutlineColor(Turbine.UI.Color(0.2,0.12,0.03));
 	end
@@ -208,7 +208,7 @@ function StatOverviewStatsPanel:Constructor(tab,mainTitle,psTitle,showAvoids,sho
 	self.dataTitleBackground.MouseLeave = function(sender,args)
     statsMenu.mouse = false;
 		
-		self.arrow:SetBackground("CombatAnalysisGroup/Resources/arrowdown_"..(statsMenu.open and "pressed" or "normal")..".tga");
+		self.arrow:SetBackground("TumbaAnalysis/Resources/arrowdown_"..(statsMenu.open and "pressed" or "normal")..".tga");
 		self.dataTitle:SetForeColor(Turbine.UI.Color(0.95,0.9,0.3));
 		self.dataTitle:SetOutlineColor(Turbine.UI.Color(0.1,0.1,0.1));
 	end
@@ -221,12 +221,12 @@ function StatOverviewStatsPanel:Constructor(tab,mainTitle,psTitle,showAvoids,sho
 		end
 		
 		self.arrow.pressed = true;
-		self.arrow:SetBackground("CombatAnalysisGroup/Resources/arrowdown_pressed.tga");
+		self.arrow:SetBackground("TumbaAnalysis/Resources/arrowdown_pressed.tga");
 	end
 	
 	self.dataTitleBackground.MouseUp = function(sender,args)
 		self.arrow.pressed = false;
-		self.arrow:SetBackground("CombatAnalysisGroup/Resources/arrowdown_normal.tga");
+		self.arrow:SetBackground("TumbaAnalysis/Resources/arrowdown_normal.tga");
 	end
 	
 	self.dataTitleBackground.MouseClick = function(sender,args)
@@ -722,7 +722,7 @@ function StatOverviewStatsPanel:RemovePanelFromWindow()
   
   if (currentWindow == nil) then return end
   currentWindow:RemovePanel(self);
-  self.tab.panel.infoButton:SetBackground("CombatAnalysisGroup/Resources/gears.tga");
+  self.tab.panel.infoButton:SetBackground("TumbaAnalysis/Resources/gears.tga");
   self.tab:SaveState();
   
   if (currentWindow.lockedPanel == self) then

@@ -24,27 +24,27 @@ menuPane:SetStatsWindowSet(statOverviewStatsWindows);
 
 
 -- import relevant classes
-import "CombatAnalysisGroup.StatOverview.StatOverviewWindow";
+import "TumbaAnalysis.StatOverview.StatOverviewWindow";
 
-import "CombatAnalysisGroup.StatOverview.StatOverviewTabMenu";
-import "CombatAnalysisGroup.StatOverview.StatOverviewStatsMenu";
-import "CombatAnalysisGroup.StatOverview.StatOverviewChatMenu";
-import "CombatAnalysisGroup.StatOverview.StatOverviewTraitConfigMenu";
+import "TumbaAnalysis.StatOverview.StatOverviewTabMenu";
+import "TumbaAnalysis.StatOverview.StatOverviewStatsMenu";
+import "TumbaAnalysis.StatOverview.StatOverviewChatMenu";
+import "TumbaAnalysis.StatOverview.StatOverviewTraitConfigMenu";
 
-import "CombatAnalysisGroup.StatOverview.StatOverviewTab";
-import "CombatAnalysisGroup.StatOverview.StatOverviewPanel";
+import "TumbaAnalysis.StatOverview.StatOverviewTab";
+import "TumbaAnalysis.StatOverview.StatOverviewPanel";
 
-import "CombatAnalysisGroup.StatOverview.StatOverviewBarsPanel";
-import "CombatAnalysisGroup.StatOverview.StatOverviewBar";
+import "TumbaAnalysis.StatOverview.StatOverviewBarsPanel";
+import "TumbaAnalysis.StatOverview.StatOverviewBar";
 
-import "CombatAnalysisGroup.StatOverview.StatOverviewStatsWindow";
+import "TumbaAnalysis.StatOverview.StatOverviewStatsWindow";
 
-import "CombatAnalysisGroup.StatOverview.StatOverviewStatsPanel";
-import "CombatAnalysisGroup.StatOverview.StatOverviewTreeNode";
+import "TumbaAnalysis.StatOverview.StatOverviewStatsPanel";
+import "TumbaAnalysis.StatOverview.StatOverviewTreeNode";
 
 
 -- construct the encounters combo box and the two target combo boxes (mobs and restores)
--- CombatAnalysisGroup: bumped instance counts by 1 to back the Group tab
+-- TumbaAnalysis: bumped instance counts by 1 to back the Group tab
 _G.encountersComboBox = CombatAnalysisComboBox(7,backgroundColor,controlColor,combatData,combatData.maxEncounters,combatData.maxLoadedEncounters);
 _G.mobsComboBox = CombatAnalysisComboBox(4,backgroundColor,Turbine.UI.Color(0.9,0.45,0.3),combatData);
 _G.restoresComboBox = CombatAnalysisComboBox(3,backgroundColor,Turbine.UI.Color(0.2,0.85,0.65),combatData);

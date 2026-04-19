@@ -163,7 +163,7 @@ function WindowsSubMenuPanel:Constructor(window,width,parent)
         Misc.SetValue(self.selectedWindow,"minimized",false);
         self.selectedWindow:ShowBottomRightIcon(true);
         self.selectedWindow:SetResizable(true);
-        self.selectedWindow.titleContent.minimize:SetBackground("CombatAnalysisGroup/Resources/titlebar_min.tga");
+        self.selectedWindow.titleContent.minimize:SetBackground("TumbaAnalysis/Resources/titlebar_min.tga");
         self.selectedWindow:SetSize(self.selectedWindow.w,self.selectedWindow.h);
         self.selectedWindow.selected.panel:FullUpdate(self.selectedWindow.selected:Duration(),true,self.selectedWindow.selected.panel.barsPanel.selectedPlayer);
         

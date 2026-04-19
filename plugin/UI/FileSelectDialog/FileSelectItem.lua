@@ -61,7 +61,7 @@ function FileSelectItem:Constructor(name,index,selected,drag)
 	self.icon:SetPosition(2,2);
 	self.icon:SetSize(16,16);
 	self.icon:SetBlendMode(Turbine.UI.BlendMode.AlphaBlend);
-	self.icon:SetBackground("CombatAnalysisGroup/Resources/file"..(drag and "_drag" or "")..".tga");
+	self.icon:SetBackground("TumbaAnalysis/Resources/file"..(drag and "_drag" or "")..".tga");
 	self.icon:SetMouseVisible(false);
 	
 	self.fileName = Turbine.UI.Label();
@@ -108,8 +108,8 @@ function FileSelectItem:SetSelected(selected)
 		(self.mouseIn and Turbine.UI.Color(0.44,0.15,0.1575,0.175) or Turbine.UI.Color(0.925,0,0,0))
 	);
 	self.background:SetBackground(selected and 
-		("CombatAnalysisGroup/Resources/file_item_selected"..(self.mouseIn and "_mouseover" or "")..".tga") or
-		(self.mouseIn and "CombatAnalysisGroup/Resources/file_item_mouseover.tga" or nil)
+		("TumbaAnalysis/Resources/file_item_selected"..(self.mouseIn and "_mouseover" or "")..".tga") or
+		(self.mouseIn and "TumbaAnalysis/Resources/file_item_mouseover.tga" or nil)
 	);
 	
 	self.selected = selected;
@@ -118,7 +118,7 @@ end
 function FileSelectItem:SetDragTarget(target)
 	if (target) then
 		self.border:SetBackColor(Turbine.UI.Color(0.15,0.275,0.18));
-		self.background:SetBackground("CombatAnalysisGroup/Resources/file_item_drag_target.tga")
+		self.background:SetBackground("TumbaAnalysis/Resources/file_item_drag_target.tga")
 	else
 		self:SetSelected(fileSelectBox.selected[self.index]);
 	end

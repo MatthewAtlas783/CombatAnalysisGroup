@@ -1,15 +1,15 @@
-import "CombatAnalysisGroup.UI.CombatAnalysisSpecific.CombatAnalysisWindow"
-import "CombatAnalysisGroup.UI.CombatAnalysisSpecific.CombatAnalysisTitleBar"
-import "CombatAnalysisGroup.UI.CombatAnalysisSpecific.CombatAnalysisTabMenu"
-import "CombatAnalysisGroup.UI.CombatAnalysisSpecific.CombatAnalysisTab"
-import "CombatAnalysisGroup.UI.CombatAnalysisSpecific.CombatAnalysisTabbedWindow"
+import "TumbaAnalysis.UI.CombatAnalysisSpecific.CombatAnalysisWindow"
+import "TumbaAnalysis.UI.CombatAnalysisSpecific.CombatAnalysisTitleBar"
+import "TumbaAnalysis.UI.CombatAnalysisSpecific.CombatAnalysisTabMenu"
+import "TumbaAnalysis.UI.CombatAnalysisSpecific.CombatAnalysisTab"
+import "TumbaAnalysis.UI.CombatAnalysisSpecific.CombatAnalysisTabbedWindow"
 
-import "CombatAnalysisGroup.UI.CombatAnalysisSpecific.CombatAnalysisComboBox"
+import "TumbaAnalysis.UI.CombatAnalysisSpecific.CombatAnalysisComboBox"
 
-import "CombatAnalysisGroup.UI.CombatAnalysisSpecific.CombatAnalysisBarsPanel"
-import "CombatAnalysisGroup.UI.CombatAnalysisSpecific.CombatAnalysisBar"
+import "TumbaAnalysis.UI.CombatAnalysisSpecific.CombatAnalysisBarsPanel"
+import "TumbaAnalysis.UI.CombatAnalysisSpecific.CombatAnalysisBar"
 
-import "CombatAnalysisGroup.UI.CombatAnalysisSpecific.CombatAnalysisTreePanel"
-import "CombatAnalysisGroup.UI.CombatAnalysisSpecific.CombatAnalysisTreeNode"
+import "TumbaAnalysis.UI.CombatAnalysisSpecific.CombatAnalysisTreePanel"
+import "TumbaAnalysis.UI.CombatAnalysisSpecific.CombatAnalysisTreeNode"
 
-import "CombatAnalysisGroup.UI.CombatAnalysisSpecific.CombatAnalysisIcon"
+import "TumbaAnalysis.UI.CombatAnalysisSpecific.CombatAnalysisIcon"

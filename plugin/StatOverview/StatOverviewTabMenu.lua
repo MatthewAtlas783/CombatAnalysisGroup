@@ -42,13 +42,13 @@ function StatOverviewTabMenu:PopulateMenu(tab)
   self.configureTab.Click = function(sender,args)
     uiMenuPanel.tabsSubMenuPanel:SelectTab(tab);
     menuPane:SelectTab(2);
-    Turbine.PluginManager.ShowOptions(Plugins["CombatAnalysisGroup"]);
+    Turbine.PluginManager.ShowOptions(Plugins["TumbaAnalysis"]);
 	end
   
   self.configureWindow.Click = function(sender,args)
     uiMenuPanel.windowsSubMenuPanel:SelectWindow(tab.window);
     menuPane:SelectTab(2);
-    Turbine.PluginManager.ShowOptions(Plugins["CombatAnalysisGroup"]);
+    Turbine.PluginManager.ShowOptions(Plugins["TumbaAnalysis"]);
 	end
   
 end

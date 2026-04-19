@@ -151,7 +151,7 @@ function StatOverviewStatsWindow:AddPanel(statsPanel)
 	
 	-- copy over relevant style
 	statsPanel.tab.showStats = self.panels[1].tab.showStats;
-	statsPanel.tab.panel.infoButton:SetBackground("CombatAnalysisGroup/Resources/info_button"..(statsPanel.tab.showStats == 3 and "_border" or (statsPanel.tab.showStats == 2 and "_quarter_border" or ""))..".tga");
+	statsPanel.tab.panel.infoButton:SetBackground("TumbaAnalysis/Resources/info_button"..(statsPanel.tab.showStats == 3 and "_border" or (statsPanel.tab.showStats == 2 and "_quarter_border" or ""))..".tga");
 	
 	if (#self.panels == 1) then
 		self:SetShowingPanel(statsPanel);

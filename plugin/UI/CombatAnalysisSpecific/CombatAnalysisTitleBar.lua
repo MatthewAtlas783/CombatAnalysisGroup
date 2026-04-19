@@ -43,30 +43,30 @@ function CombatAnalysisTitleBar:Constructor(window,backgroundColor,closable)
 	self.close:SetSize(16,16);
 	self.close:SetZOrder(4);
 	self.close:SetBlendMode(Turbine.UI.BlendMode.AlphaBlend);
-	self.close:SetBackground("CombatAnalysisGroup/Resources/titlebar_X_2"..(closable and "" or "_sepia")..".tga");
+	self.close:SetBackground("TumbaAnalysis/Resources/titlebar_X_2"..(closable and "" or "_sepia")..".tga");
 	self.close.enabled = closable;
 	self.close.pressed = false;
 	self.close.MouseEnter = function(sender, args)
 		if (self.close.enabled) then
-			self.close:SetBackground("CombatAnalysisGroup/Resources/titlebar_X_2_"..(self.close.pressed and "pressed" or "mouseover")..".tga");
+			self.close:SetBackground("TumbaAnalysis/Resources/titlebar_X_2_"..(self.close.pressed and "pressed" or "mouseover")..".tga");
 		end
 	end
 	self.close.MouseLeave = function(sender, args)
 		if (self.close.enabled) then
-			self.close:SetBackground("CombatAnalysisGroup/Resources/titlebar_X_2"..(self.close.pressed and "_mouseover" or "")..".tga");
+			self.close:SetBackground("TumbaAnalysis/Resources/titlebar_X_2"..(self.close.pressed and "_mouseover" or "")..".tga");
 		end
 	end
 	self.close.MouseDown = function(sender, args)
 		WindowManager.MouseWasPressed(self.window);
 		if (self.close.enabled) then
 			self.close.pressed = true;
-			self.close:SetBackground("CombatAnalysisGroup/Resources/titlebar_X_2_pressed.tga");
+			self.close:SetBackground("TumbaAnalysis/Resources/titlebar_X_2_pressed.tga");
 		end
 	end
 	self.close.MouseUp = function(sender, args)
 		if (self.close.enabled) then
 			self.close.pressed = false;
-			self.close:SetBackground("CombatAnalysisGroup/Resources/titlebar_X_2.tga");
+			self.close:SetBackground("TumbaAnalysis/Resources/titlebar_X_2.tga");
 		end
 	end
 	self.close.MouseClick = function(sender, args)
@@ -77,7 +77,7 @@ function CombatAnalysisTitleBar:Constructor(window,backgroundColor,closable)
   
   Misc.AddListener(nil,"windowsLocked",function(sender,args)
     self.close.enabled = not windowsLocked;
-    self.close:SetBackground("CombatAnalysisGroup/Resources/titlebar_X_2"..(windowsLocked and "_sepia" or "")..".tga");
+    self.close:SetBackground("TumbaAnalysis/Resources/titlebar_X_2"..(windowsLocked and "_sepia" or "")..".tga");
   end, self, self);
 	
 	-- minimize button
@@ -87,34 +87,34 @@ function CombatAnalysisTitleBar:Constructor(window,backgroundColor,closable)
 	self.minimize:SetSize(16,16);
 	self.minimize:SetZOrder(4);
 	self.minimize:SetBlendMode(Turbine.UI.BlendMode.AlphaBlend);
-	self.minimize:SetBackground("CombatAnalysisGroup/Resources/titlebar_min.tga");
+	self.minimize:SetBackground("TumbaAnalysis/Resources/titlebar_min.tga");
 	self.minimize.pressed = false;
 	self.minimize.MouseEnter = function(sender, args)
 		if (self.window.minimized) then
-			self.minimize:SetBackground("CombatAnalysisGroup/Resources/titlebar_max_"..(self.minimize.pressed and "pressed" or "mouseover")..".tga");
+			self.minimize:SetBackground("TumbaAnalysis/Resources/titlebar_max_"..(self.minimize.pressed and "pressed" or "mouseover")..".tga");
 		else
-			self.minimize:SetBackground("CombatAnalysisGroup/Resources/titlebar_min_"..(self.minimize.pressed and "pressed" or "mouseover")..".tga");
+			self.minimize:SetBackground("TumbaAnalysis/Resources/titlebar_min_"..(self.minimize.pressed and "pressed" or "mouseover")..".tga");
 		end
 	end
 	self.minimize.MouseLeave = function(sender, args)
 		if (self.window.minimized) then
-			self.minimize:SetBackground("CombatAnalysisGroup/Resources/titlebar_max"..(self.minimize.pressed and "_mouseover" or "")..".tga");
+			self.minimize:SetBackground("TumbaAnalysis/Resources/titlebar_max"..(self.minimize.pressed and "_mouseover" or "")..".tga");
 		else
-			self.minimize:SetBackground("CombatAnalysisGroup/Resources/titlebar_min"..(self.minimize.pressed and "_mouseover" or "")..".tga");
+			self.minimize:SetBackground("TumbaAnalysis/Resources/titlebar_min"..(self.minimize.pressed and "_mouseover" or "")..".tga");
 		end
 	end
 	self.minimize.MouseDown = function(sender, args)
 		WindowManager.MouseWasPressed(self.window);
 		self.minimize.pressed = true;
-		self.minimize:SetBackground("CombatAnalysisGroup/Resources/titlebar_"..(self.window.minimized and "max" or "min").."_pressed.tga");
+		self.minimize:SetBackground("TumbaAnalysis/Resources/titlebar_"..(self.window.minimized and "max" or "min").."_pressed.tga");
 	end
 	self.minimize.MouseUp = function(sender, args)
 		self.minimize.pressed = false;
-		self.minimize:SetBackground("CombatAnalysisGroup/Resources/titlebar_"..(self.window.minimized and "max" or "min")..".tga");
+		self.minimize:SetBackground("TumbaAnalysis/Resources/titlebar_"..(self.window.minimized and "max" or "min")..".tga");
 	end
 	self.minimize.MouseClick = function(sender, args)
 		self.window:Minimize();
-		self.minimize:SetBackground("CombatAnalysisGroup/Resources/titlebar_"..(self.window.minimized and "max" or "min").."_mouseover.tga");
+		self.minimize:SetBackground("TumbaAnalysis/Resources/titlebar_"..(self.window.minimized and "max" or "min").."_mouseover.tga");
 	end
 	self.minimize.MouseDoubleClick = function(sender, args)
 		self.minimize:MouseClick(args);
@@ -127,15 +127,15 @@ function CombatAnalysisTitleBar:Constructor(window,backgroundColor,closable)
 	self.menu:SetSize(17,17);
 	self.menu:SetZOrder(4);
 	self.menu:SetBlendMode(Turbine.UI.BlendMode.AlphaBlend);
-	self.menu:SetBackground("CombatAnalysisGroup/Resources/gears.tga");
+	self.menu:SetBackground("TumbaAnalysis/Resources/gears.tga");
 	
 	self.menu.pressed = false;
 	
 	self.menu.MouseEnter = function(sender, args)
-    self.menu:SetBackground("CombatAnalysisGroup/Resources/gears_mouseover.tga");
+    self.menu:SetBackground("TumbaAnalysis/Resources/gears_mouseover.tga");
 	end
 	self.menu.MouseLeave = function(sender, args)
-    self.menu:SetBackground("CombatAnalysisGroup/Resources/gears"..(self.menu.pressed and "_mouseover" or "")..".tga");
+    self.menu:SetBackground("TumbaAnalysis/Resources/gears"..(self.menu.pressed and "_mouseover" or "")..".tga");
 	end
 	self.menu.MouseDown = function(sender, args)
 		WindowManager.MouseWasPressed(self.window);
@@ -143,11 +143,11 @@ function CombatAnalysisTitleBar:Constructor(window,backgroundColor,closable)
 	end
 	self.menu.MouseUp = function(sender, args)
 		self.menu.pressed = false;
-		self.menu:SetBackground("CombatAnalysisGroup/Resources/gears.tga");
+		self.menu:SetBackground("TumbaAnalysis/Resources/gears.tga");
 	end
 	self.menu.MouseClick = function(sender, args)
     menuPane:SelectTab(1);
-    Turbine.PluginManager.ShowOptions(Plugins["CombatAnalysisGroup"]);
+    Turbine.PluginManager.ShowOptions(Plugins["TumbaAnalysis"]);
 	end
 	
 	self:Layout();
@@ -165,8 +165,8 @@ function CombatAnalysisTitleBar:EnableClose(enable)
 	self.close.enabled = enable;
 	
 	if (self.close.enabled) then
-		self.close:SetBackground("CombatAnalysisGroup/Resources/titlebar_X_2.tga");
+		self.close:SetBackground("TumbaAnalysis/Resources/titlebar_X_2.tga");
 	else
-		self.close:SetBackground("CombatAnalysisGroup/Resources/titlebar_X_2_sepia.tga");
+		self.close:SetBackground("TumbaAnalysis/Resources/titlebar_X_2_sepia.tga");
 	end
 end

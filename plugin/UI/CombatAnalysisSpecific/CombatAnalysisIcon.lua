@@ -286,7 +286,7 @@ function CombatAnalysisIcon:Constructor()
   
   self.mainIcon = Turbine.UI.Control();
   self.mainIcon:SetParent(self);
-  self.mainIcon:SetBackground("CombatAnalysisGroup/Resources/logo.tga");
+  self.mainIcon:SetBackground("TumbaAnalysis/Resources/logo.tga");
   self.mainIcon:SetPosition((self.w-40)/2,5);
   self.mainIcon:SetSize(40,40);
   
@@ -321,29 +321,29 @@ function CombatAnalysisIcon:Constructor()
 		
 		if (count ~= self.count) then
 			self.count = count;
-			self.icon:SetBackground("CombatAnalysisGroup/Resources/load_animation_"..math.min(CombatAnalysisIcon.frames-1,self.count)..".tga");
+			self.icon:SetBackground("TumbaAnalysis/Resources/load_animation_"..math.min(CombatAnalysisIcon.frames-1,self.count)..".tga");
 		end
 	end
   
   self.menu = Menu({
     
-    {L.LockWindows,"CombatAnalysisGroup/Resources/button_lock_normal_normal.tga",function(sender,args)
+    {L.LockWindows,"TumbaAnalysis/Resources/button_lock_normal_normal.tga",function(sender,args)
       self:LockWindows(not windowsLocked);
     end},
     
-    {L.SaveData,"CombatAnalysisGroup/Resources/save.tga",function(sender,args)
+    {L.SaveData,"TumbaAnalysis/Resources/save.tga",function(sender,args)
       fileSelectDialog:Show(true);
       self.menu:SetVisible(false);
     end},
     
-    {L.LoadData,"CombatAnalysisGroup/Resources/load.tga",function(sender,args)
+    {L.LoadData,"TumbaAnalysis/Resources/load.tga",function(sender,args)
       fileSelectDialog:Show(false);
       self.menu:SetVisible(false);
     end},
     
-    {L.OpenTheMenu,"CombatAnalysisGroup/Resources/gears.tga",function(sender,args)
+    {L.OpenTheMenu,"TumbaAnalysis/Resources/gears.tga",function(sender,args)
       menuPane:SelectTab(1);
-			Turbine.PluginManager.ShowOptions(Plugins["CombatAnalysisGroup"]);
+			Turbine.PluginManager.ShowOptions(Plugins["TumbaAnalysis"]);
       self.menu:SetVisible(false);
     end}
     
@@ -373,7 +373,7 @@ function CombatAnalysisIcon:LockWindows(lock,dontSave)
   settings.windowsLocked = windowsLocked;
   
   self.lockMenuItem.label:SetText(windowsLocked and L.UnlockWindows or L.LockWindows);
-  self.lockMenuItem.icon:SetBackground("CombatAnalysisGroup/Resources/button_lock_"..(windowsLocked and "highlight" or "normal").."_normal.tga");
+  self.lockMenuItem.icon:SetBackground("TumbaAnalysis/Resources/button_lock_"..(windowsLocked and "highlight" or "normal").."_normal.tga");
   
   for _,window in ipairs(statOverviewWindows) do window:WindowsLocked() end
   for _,window in ipairs(statOverviewStatsWindows) do window:WindowsLocked() end
@@ -384,7 +384,7 @@ end
 function CombatAnalysisIcon:ShowHideWindows(hide,dontSave)
   _G.windowsHidden = hide;
   settings.windowsHidden = windowsHidden;
-  self.mainIcon:SetBackground("CombatAnalysisGroup/Resources/logo"..(windowsHidden and "_disabled" or "")..".tga");
+  self.mainIcon:SetBackground("TumbaAnalysis/Resources/logo"..(windowsHidden and "_disabled" or "")..".tga");
   
   WindowManager.ShowHideWindows(statOverviewWindows, false, windowsHidden, self);
   WindowManager.ShowHideWindows(statOverviewStatsWindows, false, windowsHidden, self);

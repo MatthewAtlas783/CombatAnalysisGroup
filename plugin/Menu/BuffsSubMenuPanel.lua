@@ -33,7 +33,7 @@ function BuffsSubMenuPanel:Constructor(window,width,parent)
   self.addTraitConfiguration:SetTop(3);
   self.addTraitConfiguration:SetSize(15,15);
   self.addTraitConfiguration:SetBlendMode(Turbine.UI.BlendMode.AlphaBlend);
-  self.addTraitConfiguration:SetBackground("CombatAnalysisGroup/Resources/add_icon.tga");
+  self.addTraitConfiguration:SetBackground("TumbaAnalysis/Resources/add_icon.tga");
   self.addTraitConfiguration:SetMouseVisible(false);
   
   self.addTraitConfigurationLabel = MenuLabel(self.addTraitControl,0,200,21);
@@ -155,7 +155,7 @@ function BuffsSubMenuPanel:Constructor(window,width,parent)
   self.filterClear:SetPosition(170+196-19,16+4);
   self.filterClear:SetSize(19,14);
   self.filterClear:SetBlendMode(Turbine.UI.BlendMode.AlphaBlend);
-  self.filterClear:SetBackground("CombatAnalysisGroup/Resources/cross_small.tga");
+  self.filterClear:SetBackground("TumbaAnalysis/Resources/cross_small.tga");
   self.filterClear:SetVisible(false);
   
   self.filterClear.MouseClick = function(sender,args)
@@ -192,20 +192,20 @@ function BuffsSubMenuPanel:Constructor(window,width,parent)
   self.toBuffBarsIcon:SetPosition(140,1);
   self.toBuffBarsIcon:SetSize(16,16);
   self.toBuffBarsIcon:SetBlendMode(Turbine.UI.BlendMode.AlphaBlend);
-  self.toBuffBarsIcon:SetBackground("CombatAnalysisGroup/Resources/buffbars_arrow.tga");
+  self.toBuffBarsIcon:SetBackground("TumbaAnalysis/Resources/buffbars_arrow.tga");
   
   self.toBuffBarsControl.MouseEnter = function(sender,args)
     self.toBuffBarsLink:SetFontStyle(Turbine.UI.FontStyle.Outline);
     self.toBuffBarsLink:SetText(self.toBuffBarsLink:GetText());
     self.toBuffBarsUnderline:SetBackColor(controlColor);
-    self.toBuffBarsIcon:SetBackground("CombatAnalysisGroup/Resources/buffbars_arrow_mouseover.tga");
+    self.toBuffBarsIcon:SetBackground("TumbaAnalysis/Resources/buffbars_arrow_mouseover.tga");
   end
   
   self.toBuffBarsControl.MouseLeave = function(sender,args)
     self.toBuffBarsLink:SetFontStyle(Turbine.UI.FontStyle.None);
     self.toBuffBarsLink:SetText(self.toBuffBarsLink:GetText());
     self.toBuffBarsUnderline:SetBackColor(Turbine.UI.Color(0.9,0.5,0.5));
-    self.toBuffBarsIcon:SetBackground("CombatAnalysisGroup/Resources/buffbars_arrow.tga");
+    self.toBuffBarsIcon:SetBackground("TumbaAnalysis/Resources/buffbars_arrow.tga");
   end
   
   self.toBuffBarsControl.MouseClick = function(sender,args)
@@ -308,7 +308,7 @@ function BuffsSubMenuPanel:Constructor(window,width,parent)
     for _,buff in ipairs(self.buffs) do
       if (buff[3] and not buff[1].buffInfo.removalOnly) then
         Traits.UpdateBB(buff[1].buffInfo, self.bbActive:IsChecked());
-        buff[1].tick2:SetBackground(buff[1].buffInfo.bb and 0x410e3f4a or "CombatAnalysisGroup/Resources/cross.tga");
+        buff[1].tick2:SetBackground(buff[1].buffInfo.bb and 0x410e3f4a or "TumbaAnalysis/Resources/cross.tga");
         if (not self.bbActive:IsChecked()) then self.uncheckedBB = self.uncheckedBB + 1 end
       end
     end
@@ -331,7 +331,7 @@ function BuffsSubMenuPanel:Constructor(window,width,parent)
     for _,buff in ipairs(self.buffs) do
       if (buff[3] and not buff[1].buffInfo.removalOnly) then
         Traits.UpdateCA(buff[1].buffInfo, self.caActive:IsChecked());
-        buff[1].tick1:SetBackground(buff[1].buffInfo.ca and 0x410e3f4a or "CombatAnalysisGroup/Resources/cross.tga");
+        buff[1].tick1:SetBackground(buff[1].buffInfo.ca and 0x410e3f4a or "TumbaAnalysis/Resources/cross.tga");
         if (not self.caActive:IsChecked()) then self.uncheckedCA = self.uncheckedCA + 1 end
       end
     end
@@ -373,7 +373,7 @@ end
 
 function BuffsSubMenuPanel:SortList(skillOnly,ascending)
   if (skillOnly) then
-    self.buffSortTriangle:SetBackground("CombatAnalysisGroup/Resources/"..(ascending and "arrowup" or "dropdown_arrow_open")..".tga");
+    self.buffSortTriangle:SetBackground("TumbaAnalysis/Resources/"..(ascending and "arrowup" or "dropdown_arrow_open")..".tga");
     self.classSortTriangle:SetBackground(nil);
     
     self.buffHeader.ascending = ascending;
@@ -394,7 +394,7 @@ function BuffsSubMenuPanel:SortList(skillOnly,ascending)
       end
     end);
   else
-    self.classSortTriangle:SetBackground("CombatAnalysisGroup/Resources/"..(ascending and "arrowup" or "dropdown_arrow_open")..".tga");
+    self.classSortTriangle:SetBackground("TumbaAnalysis/Resources/"..(ascending and "arrowup" or "dropdown_arrow_open")..".tga");
     self.buffSortTriangle:SetBackground(nil);
     
     self.classHeader.ascending = ascending;

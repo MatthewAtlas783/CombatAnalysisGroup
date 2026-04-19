@@ -8,7 +8,7 @@ L["TranslatedBy"] = "Traduction : Mayara@Sirannon Ardi@Estel Adra@Sirannon";
 L["FailedToLoadTraitsResetConfirmation"] = "Ã‰chec du chargement des traits. RÃ©initialiser et continuer ?".."\n".."Attention : Vous perdrez toutes vos configurations personnelles de buffs et dÃ©buffs.";
 L["FailedToLoadTraitsMessage"] = "Il est recommandÃ© que vous dÃ©chargiez le plugin maintenant. Vous pouvez tenter de rechercher les erreurs dans votre fichier de traits :\n\"Documents\\The_Lord_of_the_Rings_Online\\PluginData\\<NomDuCompte>\\<NomDuServeur>\\<NomDuPerso>\\CombatAnalysisTraits.plugindata\"";
 L["FailedToLoadSettingsResetConfirmation"] = "Ã‰chec du chargement de vos paramÃ¨tres de configuration. RÃ©initialiser et continuer ?".."\n".."Attention : Vous perdrez tous vos paramÃ¨tres personnels (exceptÃ© les configurations de buffs et dÃ©buffs).";
-L["FailedToLoadSettingsMessage"] = "Il est recommandÃ© que vous dÃ©chargiez le plugin maintenant. Vous pouvez tenter de rechercher les erreurs dans votre fichier de configuration :\n\"Documents\\The_Lord_of_the_Rings_Online\\PluginData\\<NomDuCompte>\\<NomDuServeur>\\<NomDuPerso>\\CombatAnalysisGroup.plugindata\"";
+L["FailedToLoadSettingsMessage"] = "Il est recommandÃ© que vous dÃ©chargiez le plugin maintenant. Vous pouvez tenter de rechercher les erreurs dans votre fichier de configuration :\n\"Documents\\The_Lord_of_the_Rings_Online\\PluginData\\<NomDuCompte>\\<NomDuServeur>\\<NomDuPerso>\\TumbaAnalysis.plugindata\"";
 
 -- Icon Menu
 
@@ -221,7 +221,7 @@ L["ConfigureInBuffBarsLinkTooltip"] = "Cliquer pour aller dans le menu de BuffBa
 L["ClassTooltip"] = "SpÃ©cifier Ã  quelle classe ce buff/dÃ©buff appartient.";
 L["TempMoraleEffectNameTooltip"] = "SpÃ©cifier le nom de l'effet correspondant Ã  cette compÃ©tence de moral temporaire. Ce nom doit Ãªtre parfaitement similaire au nom de l'effet.";
 L["SkillNameTooltip"] = "SpÃ©cifier un nom unique pour ce buff/debuff. Celui-ci apparaitra sur l'onglet Buffs/DÃ©buffs, ainsi que dans la fenÃªtre de'effets de Buffbars si applicable.";
-L["IconFileNameTooltip"] = "SpÃ©cifier le mon de fichier (y compris son extension) de l'icÃ´ne Ã  associer Ã  ce debuff. L'icÃ´ne doit Ãªtre placÃ©e dans le dossier 'CombatAnalysisGroup/Resources/DebuffIcons' et doit mesurer 16x16 pixels.";
+L["IconFileNameTooltip"] = "SpÃ©cifier le mon de fichier (y compris son extension) de l'icÃ´ne Ã  associer Ã  ce debuff. L'icÃ´ne doit Ãªtre placÃ©e dans le dossier 'TumbaAnalysis/Resources/DebuffIcons' et doit mesurer 16x16 pixels.";
 L["RemovalOnlyTooltip"] = "Un debuff 'Suppresseur' n'est pas observÃ©/pistÃ©, Ã  la place il est utilisÃ© pour retirer d'autres dÃ©buffs.";
 L["ToggleSkillTooltip"] = "Une 'compÃ©tence permutable' est une compÃ©tence dÃ©sactivable/activable qui dure indÃ©finiment. Ces debuffs predurent jusqu'Ã  la mort de la cible, la fin du combat, ou leur dÃ©sactivation manuelle.";
 L["RemovesTooltip"] = "Une liste de debuffs ou de contrÃ´les de foules qui seront supprimÃ©s quand ce debuff est appliquÃ©.";

@@ -240,7 +240,7 @@ function StatOverviewWindow.RestoreState(windowId,savedState)
 		h = CombatAnalysisWindow.titleBarHeight+2*CombatAnalysisWindow.border+2*CombatAnalysisWindow.resizeHangover;
 		
     Misc.SetValue(newWindow,"minimized",true);
-		newWindow.titleContent.minimize:SetBackground("CombatAnalysisGroup/Resources/titlebar_max.tga");
+		newWindow.titleContent.minimize:SetBackground("TumbaAnalysis/Resources/titlebar_max.tga");
 		newWindow:SetResizable(false);
 	end
 	

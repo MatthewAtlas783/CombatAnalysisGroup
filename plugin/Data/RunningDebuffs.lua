@@ -158,7 +158,7 @@ function RunningDebuffs:Update()
               (not combatData.currentEncounter.orderedMobs[1].terminated and
               (mobIndex == nil or combatData.currentEncounter.orderedMobs[mobIndex[1]].alive or mobIndex[2]))
             )) then
-        self:Applied(endTime,targetName,L.StunImmunity,10,true,"CombatAnalysisGroup/Resources/DebuffIcons/cc_stun_immunity.tga",initiatorName);
+        self:Applied(endTime,targetName,L.StunImmunity,10,true,"TumbaAnalysis/Resources/DebuffIcons/cc_stun_immunity.tga",initiatorName);
       end
 		else
 			break;

@@ -10,7 +10,7 @@ function PanelDivider:Constructor(text,parent)
     self:SetFontStyle(Turbine.UI.FontStyle.Outline);
     self:SetOutlineColor(Turbine.UI.Color(0, 0, 0));
     self:SetBlendMode(Turbine.UI.BlendMode.AlphaBlend);
-    self:SetBackground("CombatAnalysisGroup/Resources/options_panel_divider.tga");
+    self:SetBackground("TumbaAnalysis/Resources/options_panel_divider.tga");
     self:SetSize(400,30);
     self:SetMouseVisible(false);
     

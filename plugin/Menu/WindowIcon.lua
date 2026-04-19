@@ -99,7 +99,7 @@ function WindowIcon:BuildSelectionControl(x,y,w,h,icon)
   control:SetPosition(x,y);
   control:SetSize(w,h);
   control:SetBlendMode(Turbine.UI.BlendMode.AlphaBlend);
-  control:SetBackground("CombatAnalysisGroup/Resources/selected_control_"..icon..".tga");
+  control:SetBackground("TumbaAnalysis/Resources/selected_control_"..icon..".tga");
   control:SetVisible(false);
   return control;
 end

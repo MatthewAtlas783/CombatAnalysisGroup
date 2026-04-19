@@ -33,7 +33,7 @@ function Tab:Constructor(tabbedPane,tabIndex,tabName,content)
 	self.left:SetSize(77,21);
 	self.left:SetBlendMode(Turbine.UI.BlendMode.AlphaBlend);
 	self.left:SetMouseVisible(false);
-	self.left:SetBackground("CombatAnalysisGroup/Resources/tab_tier1_middle_back_w"..self.color..".tga");
+	self.left:SetBackground("TumbaAnalysis/Resources/tab_tier1_middle_back_w"..self.color..".tga");
 	
 	-- tab right
 	self.right = Turbine.UI.Control();
@@ -42,7 +42,7 @@ function Tab:Constructor(tabbedPane,tabIndex,tabName,content)
 	self.right:SetSize(18,21);
 	self.right:SetBlendMode(Turbine.UI.BlendMode.AlphaBlend);
 	self.right:SetMouseVisible(false);
-	self.right:SetBackground("CombatAnalysisGroup/Resources/tab_tier1_middle_back_e"..self.color..".tga");
+	self.right:SetBackground("TumbaAnalysis/Resources/tab_tier1_middle_back_e"..self.color..".tga");
 	
 	-- tab text
 	self.text = Turbine.UI.Label();
@@ -61,8 +61,8 @@ end
 function Tab:SetColor(color)
   self.color = ((color == "Red" or color == "Yellow") and ("_"..color:lower()) or "");
   
-  self.left:SetBackground("CombatAnalysisGroup/Resources/tab_tier1_middle_" .. (self.selected and "front" or "back") .. "_w"..self.color..".tga");
-	self.right:SetBackground("CombatAnalysisGroup/Resources/tab_tier1_middle_" .. (self.selected and "front" or "back") .. "_e"..self.color..".tga");
+  self.left:SetBackground("TumbaAnalysis/Resources/tab_tier1_middle_" .. (self.selected and "front" or "back") .. "_w"..self.color..".tga");
+	self.right:SetBackground("TumbaAnalysis/Resources/tab_tier1_middle_" .. (self.selected and "front" or "back") .. "_e"..self.color..".tga");
 end
 
 function Tab:SetSelected(selected)
@@ -73,8 +73,8 @@ function Tab:SetSelected(selected)
 	self.text:SetForeColor(self.selected and (self.pressed and controlSelectedColor or Turbine.UI.Color(1,1,1)) or controlColor);
 	self.text:SetFont(self.selected and Turbine.UI.Lotro.Font.TrajanPro16 or Turbine.UI.Lotro.Font.TrajanPro15);
 	self.text:SetText(self.text:GetText());
-	self.left:SetBackground("CombatAnalysisGroup/Resources/tab_tier1_middle_" .. (self.selected and "front" or "back") .. "_w"..self.color..".tga");
-	self.right:SetBackground("CombatAnalysisGroup/Resources/tab_tier1_middle_" .. (self.selected and "front" or "back") .. "_e"..self.color..".tga");
+	self.left:SetBackground("TumbaAnalysis/Resources/tab_tier1_middle_" .. (self.selected and "front" or "back") .. "_w"..self.color..".tga");
+	self.right:SetBackground("TumbaAnalysis/Resources/tab_tier1_middle_" .. (self.selected and "front" or "back") .. "_e"..self.color..".tga");
 	self.content:SetParent(self.selected and self.tabbedPane or nil);
   
   if (self.content.ContentSelected ~= nil) then
@@ -90,16 +90,16 @@ end
 function Tab:MouseEnter(args)
 	if (self.enabled) then
 		self.text:SetForeColor(self.selected and controlSelectedColor or control2Color);
-		self.left:SetBackground("CombatAnalysisGroup/Resources/tab_tier1_middle_"..((self.pressed and self.selected) and "back" or "front").."_w"..self.color..".tga");
-		self.right:SetBackground("CombatAnalysisGroup/Resources/tab_tier1_middle_"..((self.pressed and self.selected) and "back" or "front").."_e"..self.color..".tga");
+		self.left:SetBackground("TumbaAnalysis/Resources/tab_tier1_middle_"..((self.pressed and self.selected) and "back" or "front").."_w"..self.color..".tga");
+		self.right:SetBackground("TumbaAnalysis/Resources/tab_tier1_middle_"..((self.pressed and self.selected) and "back" or "front").."_e"..self.color..".tga");
 	end
 end
 
 function Tab:MouseLeave(args)
 	if (self.enabled) then
 		self.text:SetForeColor(self.pressed and (self.selected and controlSelectedColor or control2Color) or (self.selected and Turbine.UI.Color(1,1,1) or controlColor));
-		self.left:SetBackground("CombatAnalysisGroup/Resources/tab_tier1_middle_"..((self.pressed or self.selected) and "front" or "back").."_w"..self.color..".tga");
-		self.right:SetBackground("CombatAnalysisGroup/Resources/tab_tier1_middle_"..((self.pressed or self.selected) and "front" or "back").."_e"..self.color..".tga");
+		self.left:SetBackground("TumbaAnalysis/Resources/tab_tier1_middle_"..((self.pressed or self.selected) and "front" or "back").."_w"..self.color..".tga");
+		self.right:SetBackground("TumbaAnalysis/Resources/tab_tier1_middle_"..((self.pressed or self.selected) and "front" or "back").."_e"..self.color..".tga");
 	end
 end
 
@@ -109,8 +109,8 @@ function Tab:MouseDown(args)
 	if (self.enabled) then
 		self.pressed = true;
 		self.text:SetForeColor(self.selected and controlSelectedColor or Turbine.UI.Color(1,1,1));
-		self.left:SetBackground("CombatAnalysisGroup/Resources/tab_tier1_middle_"..(self.selected and "front" or "back").."_w"..self.color..".tga");
-		self.right:SetBackground("CombatAnalysisGroup/Resources/tab_tier1_middle_"..(self.selected and "front" or "back").."_e"..self.color..".tga");
+		self.left:SetBackground("TumbaAnalysis/Resources/tab_tier1_middle_"..(self.selected and "front" or "back").."_w"..self.color..".tga");
+		self.right:SetBackground("TumbaAnalysis/Resources/tab_tier1_middle_"..(self.selected and "front" or "back").."_e"..self.color..".tga");
 	end
 end
 
@@ -118,8 +118,8 @@ function Tab:MouseUp(args)
 	if (self.enabled) then
 		self.pressed = false;
 		self.text:SetForeColor(self.selected and Turbine.UI.Color(1,1,1) or controlColor);
-		self.left:SetBackground("CombatAnalysisGroup/Resources/tab_tier1_middle_"..(self.selected and "front" or "back").."_w"..self.color..".tga");
-		self.right:SetBackground("CombatAnalysisGroup/Resources/tab_tier1_middle_"..(self.selected and "front" or "back").."_e"..self.color..".tga");
+		self.left:SetBackground("TumbaAnalysis/Resources/tab_tier1_middle_"..(self.selected and "front" or "back").."_w"..self.color..".tga");
+		self.right:SetBackground("TumbaAnalysis/Resources/tab_tier1_middle_"..(self.selected and "front" or "back").."_e"..self.color..".tga");
 	end
 end
 

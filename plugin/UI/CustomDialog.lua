@@ -11,7 +11,7 @@ function CustomDialog:Constructor(text)
 	self.topLeft:SetZOrder(-1);
 	self.topLeft:SetMouseVisible(false);
 	self.topLeft:SetBlendMode(Turbine.UI.BlendMode.AlphaBlend);
-	self.topLeft:SetBackground("CombatAnalysisGroup/Resources/box_silver_upper_left.tga");
+	self.topLeft:SetBackground("TumbaAnalysis/Resources/box_silver_upper_left.tga");
 
 	-- topRight
 	self.topRight = Turbine.UI.Control();
@@ -20,7 +20,7 @@ function CustomDialog:Constructor(text)
 	self.topRight:SetZOrder(-1);
 	self.topRight:SetMouseVisible(false);
 	self.topRight:SetBlendMode(Turbine.UI.BlendMode.AlphaBlend);
-	self.topRight:SetBackground("CombatAnalysisGroup/Resources/box_silver_upper_right.tga");
+	self.topRight:SetBackground("TumbaAnalysis/Resources/box_silver_upper_right.tga");
 	
 	-- bottomLeft
 	self.bottomLeft = Turbine.UI.Control();
@@ -29,7 +29,7 @@ function CustomDialog:Constructor(text)
 	self.bottomLeft:SetZOrder(-1);
 	self.bottomLeft:SetMouseVisible(false);
 	self.bottomLeft:SetBlendMode(Turbine.UI.BlendMode.AlphaBlend);
-	self.bottomLeft:SetBackground("CombatAnalysisGroup/Resources/box_silver_bottom_left.tga");
+	self.bottomLeft:SetBackground("TumbaAnalysis/Resources/box_silver_bottom_left.tga");
 
 	-- bottomRight
 	self.bottomRight = Turbine.UI.Control();
@@ -38,7 +38,7 @@ function CustomDialog:Constructor(text)
 	self.bottomRight:SetZOrder(-1);
 	self.bottomRight:SetMouseVisible(false);
 	self.bottomRight:SetBlendMode(Turbine.UI.BlendMode.AlphaBlend);
-	self.bottomRight:SetBackground("CombatAnalysisGroup/Resources/box_silver_lower_right.tga");
+	self.bottomRight:SetBackground("TumbaAnalysis/Resources/box_silver_lower_right.tga");
 
 	-- top side
 	self.top = Turbine.UI.Control();
@@ -47,7 +47,7 @@ function CustomDialog:Constructor(text)
 	self.top:SetZOrder(-1);
 	self.top:SetMouseVisible(false);
 	self.top:SetBlendMode(Turbine.UI.BlendMode.AlphaBlend);
-	self.top:SetBackground("CombatAnalysisGroup/Resources/box_silver_upper.tga");
+	self.top:SetBackground("TumbaAnalysis/Resources/box_silver_upper.tga");
 
 	-- left side
 	self.left = Turbine.UI.Control();
@@ -56,7 +56,7 @@ function CustomDialog:Constructor(text)
 	self.left:SetZOrder(-1);
 	self.left:SetMouseVisible(false);
 	self.left:SetBlendMode(Turbine.UI.BlendMode.AlphaBlend);
-	self.left:SetBackground("CombatAnalysisGroup/Resources/box_silver_side_left.tga");
+	self.left:SetBackground("TumbaAnalysis/Resources/box_silver_side_left.tga");
 
 	-- right side
 	self.right = Turbine.UI.Control();
@@ -65,7 +65,7 @@ function CustomDialog:Constructor(text)
 	self.right:SetZOrder(-1);
 	self.right:SetMouseVisible(false);
 	self.right:SetBlendMode(Turbine.UI.BlendMode.AlphaBlend);
-	self.right:SetBackground("CombatAnalysisGroup/Resources/box_silver_side_right.tga");
+	self.right:SetBackground("TumbaAnalysis/Resources/box_silver_side_right.tga");
 	
 	-- bottom side
 	self.bottom = Turbine.UI.Control();
@@ -74,7 +74,7 @@ function CustomDialog:Constructor(text)
 	self.bottom:SetZOrder(-1);
 	self.bottom:SetMouseVisible(false);
 	self.bottom:SetBlendMode(Turbine.UI.BlendMode.AlphaBlend);
-	self.bottom:SetBackground("CombatAnalysisGroup/Resources/box_silver_bottom.tga");
+	self.bottom:SetBackground("TumbaAnalysis/Resources/box_silver_bottom.tga");
 	
 	-- center
 	self.center = Turbine.UI.Control();

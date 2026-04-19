@@ -5,7 +5,7 @@ L["TranslatedBy"] = "";
 L["FailedToLoadTraitsResetConfirmation"] = "Failed to load traits. Reset and continue?".."\n".."Warning: You will lose all your customized buff & debuff configurations.";
 L["FailedToLoadTraitsMessage"] = "It is recommended you unload the plugin now. You can attempt to check your traits file for errors:\n\"Documents\\The_Lord_of_the_Rings_Online\\PluginData\\<UserName>\\<Server>\\<CharacterName>\\CombatAnalysisTraits.plugindata\"";
 L["FailedToLoadSettingsResetConfirmation"] = "Failed to load settings. Reset and continue?".."\n".."Warning: You will lose all your customized options (excluding buff & debuff configurations).";
-L["FailedToLoadSettingsMessage"] = "It is recommended you unload the plugin now. You can attempt to check your settings file for errors:\n\"Documents\\The_Lord_of_the_Rings_Online\\PluginData\\<UserName>\\<Server>\\<CharacterName>\\CombatAnalysisGroup.plugindata\"";
+L["FailedToLoadSettingsMessage"] = "It is recommended you unload the plugin now. You can attempt to check your settings file for errors:\n\"Documents\\The_Lord_of_the_Rings_Online\\PluginData\\<UserName>\\<Server>\\<CharacterName>\\TumbaAnalysis.plugindata\"";
 
 -- Icon Menu
 
@@ -218,7 +218,7 @@ L["ConfigureInBuffBarsLinkTooltip"] = "Click to go to the BuffBars Menu where yo
 L["ClassTooltip"] = "Specify the class this buff/debuff belongs to.";
 L["TempMoraleEffectNameTooltip"] = "Specify the effect name for this temporary morale skill. The name must exactly match the name of the effect.";
 L["SkillNameTooltip"] = "Specify a unique name for this buff/debuff. This will appear on the Buff/Debuff tab, and in the effect window in Buffbars if applicable.";
-L["IconFileNameTooltip"] = "Specify the file name (including extension) of the icon to be used by this debuff. The icon must be located in the 'CombatAnalysisGroup/Resources/DebuffIcons' folder and should be 16x16 pixels.";
+L["IconFileNameTooltip"] = "Specify the file name (including extension) of the icon to be used by this debuff. The icon must be located in the 'TumbaAnalysis/Resources/DebuffIcons' folder and should be 16x16 pixels.";
 L["RemovalOnlyTooltip"] = "A 'Removal Only' debuff is not tracked, and instead is used just to remove other debuffs.";
 L["ToggleSkillTooltip"] = "A 'Toggle Skill' is a skill that is toggled on and lasts indefinitely. These debuffs are assumed to last until the target is killed, combat ends, or a overwriting toggle is reapplied.";
 L["RemovesTooltip"] = "A list of debuffs or crowd control skills that will be removed when this debuff is applied.";

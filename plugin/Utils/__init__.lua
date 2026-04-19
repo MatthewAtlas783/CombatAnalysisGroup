@@ -3,7 +3,7 @@
 
 local function GetVersionNo()
 	for _,plugin in ipairs(Turbine.PluginManager.GetAvailablePlugins()) do
-		if (plugin.Name == "CombatAnalysisGroup") then
+		if (plugin.Name == "TumbaAnalysis") then
 			return plugin.Version;
 		end
 	end
@@ -15,17 +15,17 @@ _G.versionNo = (err and versionNo or "");
 
 -- imports
 
-import "CombatAnalysisGroup.Utils.Class"
-import "CombatAnalysisGroup.Utils.Type"
+import "TumbaAnalysis.Utils.Class"
+import "TumbaAnalysis.Utils.Type"
 
-import "CombatAnalysisGroup.Utils.HashSet"
-import "CombatAnalysisGroup.Utils.OrderedList"
-import "CombatAnalysisGroup.Utils.OrderedFileList"
+import "TumbaAnalysis.Utils.HashSet"
+import "TumbaAnalysis.Utils.OrderedList"
+import "TumbaAnalysis.Utils.OrderedFileList"
 
-import "CombatAnalysisGroup.Utils.Settings"
-import "CombatAnalysisGroup.Utils.DataStorage"
-import "CombatAnalysisGroup.Utils.Misc"
-import "CombatAnalysisGroup.Utils.Enums"
+import "TumbaAnalysis.Utils.Settings"
+import "TumbaAnalysis.Utils.DataStorage"
+import "TumbaAnalysis.Utils.Misc"
+import "TumbaAnalysis.Utils.Enums"
 
-import "CombatAnalysisGroup.Utils.Commands"
-import "CombatAnalysisGroup.Utils.KeyManager"
+import "TumbaAnalysis.Utils.Commands"
+import "TumbaAnalysis.Utils.KeyManager"

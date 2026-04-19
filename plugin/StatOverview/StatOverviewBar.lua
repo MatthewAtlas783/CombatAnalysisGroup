@@ -66,33 +66,33 @@ function StatOverviewBar:Constructor(panel,hasTwoParts,topBar)
 		self.lockIcon:SetTop((topBar and CombatAnalysisWindow.border or 0)+math.max(0,math.floor((CombatAnalysisBarsPanel.barThickness-19)/2)));
 		self.lockIcon:SetSize(20,19);
 		self.lockIcon:SetZOrder(4);
-		self.lockIcon:SetBackground("CombatAnalysisGroup/Resources/button_lock_normal_normal.tga");
+		self.lockIcon:SetBackground("TumbaAnalysis/Resources/button_lock_normal_normal.tga");
 		self.lockIcon:SetBlendMode(Turbine.UI.BlendMode.AlphaBlend);
 		self.lockIcon:SetMouseVisible(true);
 		self.lockIcon:SetVisible(false);
 		
 		self.lockIcon.MouseEnter = function(sender, args)
 			if (self.locked) then
-				self.lockIcon:SetBackground("CombatAnalysisGroup/Resources/button_lock_highlight_rollover.tga");
+				self.lockIcon:SetBackground("TumbaAnalysis/Resources/button_lock_highlight_rollover.tga");
 			else
-				self.lockIcon:SetBackground("CombatAnalysisGroup/Resources/button_lock_normal_"..(self.lockIcon.pressed and "pressed" or "rollover")..".tga");
+				self.lockIcon:SetBackground("TumbaAnalysis/Resources/button_lock_normal_"..(self.lockIcon.pressed and "pressed" or "rollover")..".tga");
 			end
 		end
 		self.lockIcon.MouseLeave = function(sender, args)
 			if (self.locked) then
-				self.lockIcon:SetBackground("CombatAnalysisGroup/Resources/button_lock_highlight"..(self.lockIcon.pressed and "_rollover" or "_normal")..".tga");
+				self.lockIcon:SetBackground("TumbaAnalysis/Resources/button_lock_highlight"..(self.lockIcon.pressed and "_rollover" or "_normal")..".tga");
 			else
-				self.lockIcon:SetBackground("CombatAnalysisGroup/Resources/button_lock_normal"..(self.lockIcon.pressed and "_rollover" or "_normal")..".tga");
+				self.lockIcon:SetBackground("TumbaAnalysis/Resources/button_lock_normal"..(self.lockIcon.pressed and "_rollover" or "_normal")..".tga");
 			end
 		end
 		self.lockIcon.MouseDown = function(sender, args)
 			WindowManager.MouseWasPressed(self.panel.tab.window);
 			self.lockIcon.pressed = true;
-			self.lockIcon:SetBackground("CombatAnalysisGroup/Resources/button_lock_"..(self.locked and "highlight_rollover" or "normal_pressed")..".tga");
+			self.lockIcon:SetBackground("TumbaAnalysis/Resources/button_lock_"..(self.locked and "highlight_rollover" or "normal_pressed")..".tga");
 		end
 		self.lockIcon.MouseUp = function(sender, args)
 			self.lockIcon.pressed = false;
-			self.lockIcon:SetBackground("CombatAnalysisGroup/Resources/button_lock_"..(self.locked and "highlight" or "normal").."_normal.tga");
+			self.lockIcon:SetBackground("TumbaAnalysis/Resources/button_lock_"..(self.locked and "highlight" or "normal").."_normal.tga");
 		end
 		self.lockIcon.MouseClick = function(sender, args)
       self.panel.tab.statsPanel.window:SetLocked(not self.locked and self or nil,not self.locked and self.panel.tab.statsPanel or nil,not self.locked);
@@ -226,7 +226,7 @@ end
 function CombatAnalysisBar:SetLocked(lock)
 	self.locked = lock;
 	-- update the lock icon
-	self.lockIcon:SetBackground("CombatAnalysisGroup/Resources/button_lock_"..(self.locked and "highlight" or "normal").."_rollover.tga");
+	self.lockIcon:SetBackground("TumbaAnalysis/Resources/button_lock_"..(self.locked and "highlight" or "normal").."_rollover.tga");
 	if (self.panel.hoverBar ~= self) then
 		self:SetLockShowing(self.locked);
 	end

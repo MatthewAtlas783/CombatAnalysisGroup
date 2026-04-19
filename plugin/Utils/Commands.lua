@@ -14,7 +14,7 @@ function UpdateCommand:Execute(cmd, args)
 		-- show menu
 		if (string.find(args,L.Options) == 1 or string.find(args,L.Settings) == 1 or string.find(args,L.Setup) == 1 or string.find(args,"menu") == 1) then
       menuPane:SelectTab(1);
-			Turbine.PluginManager.ShowOptions(Plugins["CombatAnalysisGroup"]);
+			Turbine.PluginManager.ShowOptions(Plugins["TumbaAnalysis"]);
 			return;
 		end
 		
@@ -92,7 +92,7 @@ function UpdateCommand:Execute(cmd, args)
 end
 
 -- set up Plugin unload event
-Plugins["CombatAnalysisGroup"].Unload = function()
+Plugins["TumbaAnalysis"].Unload = function()
   -- remove the command
 	Turbine.Shell.RemoveCommand(UpdateCommand);
 	

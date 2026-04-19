@@ -111,7 +111,7 @@ function StatOverviewStatsMenu:OpenDropDown(x,y,w,statsPanel)
 	self.start = Turbine.Engine.GetGameTime();
 	self:SetWantsUpdates(true);
 	
-	self.statsPanel.arrow:SetBackground("CombatAnalysisGroup/Resources/arrowdown_pressed.tga");
+	self.statsPanel.arrow:SetBackground("TumbaAnalysis/Resources/arrowdown_pressed.tga");
 	self:SetVisible(true);
 end
 
@@ -121,7 +121,7 @@ function StatOverviewStatsMenu:CloseDropDown()
 	_G.openComboBox = nil;
 	self.open = false;
 	
-	self.statsPanel.arrow:SetBackground("CombatAnalysisGroup/Resources/arrowdown_"..(self.mouse and "rollover" or "normal")..".tga");
+	self.statsPanel.arrow:SetBackground("TumbaAnalysis/Resources/arrowdown_"..(self.mouse and "rollover" or "normal")..".tga");
 	self:SetVisible(false);
 end
 

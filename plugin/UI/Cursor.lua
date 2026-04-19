@@ -5,7 +5,7 @@
 _G.cursorHorizontal = Turbine.UI.Window();
 cursorHorizontal:SetMouseVisible(false);
 cursorHorizontal:SetZOrder(100);
-cursorHorizontal:SetBackground("CombatAnalysisGroup/Resources/cursor_horizontal.tga");
+cursorHorizontal:SetBackground("TumbaAnalysis/Resources/cursor_horizontal.tga");
 cursorHorizontal:SetSize(31,10);
 function cursorHorizontal:Update()
 	x,y = Turbine.UI.Display.GetMousePosition();
@@ -16,7 +16,7 @@ end
 _G.cursorVertical = Turbine.UI.Window();
 cursorVertical:SetMouseVisible(false);
 cursorVertical:SetZOrder(100);
-cursorVertical:SetBackground("CombatAnalysisGroup/Resources/cursor_vertical.tga");
+cursorVertical:SetBackground("TumbaAnalysis/Resources/cursor_vertical.tga");
 cursorVertical:SetSize(10,30);
 function cursorVertical:Update()
 	x,y = Turbine.UI.Display.GetMousePosition();
@@ -27,7 +27,7 @@ end
 _G.cursorDiagonalUpward = Turbine.UI.Window();
 cursorDiagonalUpward:SetMouseVisible(false);
 cursorDiagonalUpward:SetZOrder(100);
-cursorDiagonalUpward:SetBackground("CombatAnalysisGroup/Resources/cursor_diagonal_upward.tga");
+cursorDiagonalUpward:SetBackground("TumbaAnalysis/Resources/cursor_diagonal_upward.tga");
 cursorDiagonalUpward:SetSize(23,23);
 function cursorDiagonalUpward:Update()
 	x,y = Turbine.UI.Display.GetMousePosition();
@@ -38,7 +38,7 @@ end
 _G.cursorDiagonalDownward = Turbine.UI.Window();
 cursorDiagonalDownward:SetMouseVisible(false);
 cursorDiagonalDownward:SetZOrder(100);
-cursorDiagonalDownward:SetBackground("CombatAnalysisGroup/Resources/cursor_diagonal_downward.tga");
+cursorDiagonalDownward:SetBackground("TumbaAnalysis/Resources/cursor_diagonal_downward.tga");
 cursorDiagonalDownward:SetSize(22,23);
 function cursorDiagonalDownward:Update()
 	x,y = Turbine.UI.Display.GetMousePosition();

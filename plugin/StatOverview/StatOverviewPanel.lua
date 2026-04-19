@@ -185,7 +185,7 @@ function StatOverviewPanel:Constructor(tab,chatMenu,encounters,targets,hasTwoPar
 	self.chatButton = Turbine.UI.Control();
 	self.chatButton:SetParent(self.chatButtonWindow);
 	self.chatButton:SetSize(100,19);
-	self.chatButton:SetBackground("CombatAnalysisGroup/Resources/im_button_gray_normal.tga");
+	self.chatButton:SetBackground("TumbaAnalysis/Resources/im_button_gray_normal.tga");
 	self.chatButton:SetMouseVisible(false);
 	
 	-- chat send box button overlay
@@ -225,19 +225,19 @@ function StatOverviewPanel:Constructor(tab,chatMenu,encounters,targets,hasTwoPar
 	self.chatSend:SetMouseVisible(true);
 	self.chatSend.pressed = false;
 	self.chatSend.MouseEnter = function(sender, args)
-		self.chatButton:SetBackground("CombatAnalysisGroup/Resources/im_button_gray_"..(self.chatSend.pressed and "pressed" or "rollover")..".tga");
+		self.chatButton:SetBackground("TumbaAnalysis/Resources/im_button_gray_"..(self.chatSend.pressed and "pressed" or "rollover")..".tga");
 	end
 	self.chatSend.MouseLeave = function(sender, args)
-		self.chatButton:SetBackground("CombatAnalysisGroup/Resources/im_button_gray_"..(self.chatSend.pressed and "rollover" or "normal")..".tga");
+		self.chatButton:SetBackground("TumbaAnalysis/Resources/im_button_gray_"..(self.chatSend.pressed and "rollover" or "normal")..".tga");
 	end
 	self.chatSend.MouseDown = function(sender, args)
 		WindowManager.MouseWasPressed(self.tab.window);
 		self.chatSend.pressed = true;
-		self.chatButton:SetBackground("CombatAnalysisGroup/Resources/im_button_gray_pressed.tga");
+		self.chatButton:SetBackground("TumbaAnalysis/Resources/im_button_gray_pressed.tga");
 	end
 	self.chatSend.MouseUp = function(sender, args)
 		self.chatSend.pressed = false;
-		self.chatButton:SetBackground("CombatAnalysisGroup/Resources/im_button_gray_normal.tga");
+		self.chatButton:SetBackground("TumbaAnalysis/Resources/im_button_gray_normal.tga");
 	end
 	
 	self.chatSendShortcut = Turbine.UI.Lotro.Shortcut(Turbine.UI.Lotro.ShortcutType.Alias,nil);
@@ -257,37 +257,37 @@ function StatOverviewPanel:Constructor(tab,chatMenu,encounters,targets,hasTwoPar
   self.infoButton = Turbine.UI.Control();
   self.infoButton:SetParent(self.infoButtonWindow);
   self.infoButton:SetSize(17,17);
-  self.infoButton:SetBackground("CombatAnalysisGroup/Resources/spanner.tga");
+  self.infoButton:SetBackground("TumbaAnalysis/Resources/spanner.tga");
   self.infoButton:SetMouseVisible(true);
   self.infoButton.pressed = false;
   self.infoButton.MouseEnter = function(sender, args)
     self.infoButton.mouseIn = true;
     
     if (self.isBuffTab) then
-      self.infoButton:SetBackground("CombatAnalysisGroup/Resources/spanner_mouseover.tga");
+      self.infoButton:SetBackground("TumbaAnalysis/Resources/spanner_mouseover.tga");
     elseif (self.tab.statsPanel.window == nil) then
-      self.infoButton:SetBackground("CombatAnalysisGroup/Resources/gears_mouseover.tga");
+      self.infoButton:SetBackground("TumbaAnalysis/Resources/gears_mouseover.tga");
     elseif (self.tab.showStats == 3) then
-      self.infoButton:SetBackground("CombatAnalysisGroup/Resources/info_button_border_"..(self.infoButton.pressed and "pressed" or "rollover")..".tga");
+      self.infoButton:SetBackground("TumbaAnalysis/Resources/info_button_border_"..(self.infoButton.pressed and "pressed" or "rollover")..".tga");
     elseif (self.tab.showStats == 2) then
-      self.infoButton:SetBackground("CombatAnalysisGroup/Resources/info_button_quarter_border_"..(self.infoButton.pressed and "pressed" or "rollover")..".tga");
+      self.infoButton:SetBackground("TumbaAnalysis/Resources/info_button_quarter_border_"..(self.infoButton.pressed and "pressed" or "rollover")..".tga");
     else
-      self.infoButton:SetBackground("CombatAnalysisGroup/Resources/info_button_"..(self.infoButton.pressed and "pressed" or "rollover")..".tga");
+      self.infoButton:SetBackground("TumbaAnalysis/Resources/info_button_"..(self.infoButton.pressed and "pressed" or "rollover")..".tga");
     end
   end
   self.infoButton.MouseLeave = function(sender, args)
     self.infoButton.mouseIn = false;
     
     if (self.isBuffTab) then
-      self.infoButton:SetBackground("CombatAnalysisGroup/Resources/spanner"..(self.infoButton.pressed and "_mouseover" or "")..".tga");
+      self.infoButton:SetBackground("TumbaAnalysis/Resources/spanner"..(self.infoButton.pressed and "_mouseover" or "")..".tga");
     elseif (self.tab.statsPanel.window == nil) then
-      self.infoButton:SetBackground("CombatAnalysisGroup/Resources/gears"..(self.infoButton.pressed and "_mouseover" or "")..".tga");
+      self.infoButton:SetBackground("TumbaAnalysis/Resources/gears"..(self.infoButton.pressed and "_mouseover" or "")..".tga");
     elseif (self.tab.showStats == 3) then
-      self.infoButton:SetBackground("CombatAnalysisGroup/Resources/info_button_border"..(self.infoButton.pressed and "_rollover" or "")..".tga");
+      self.infoButton:SetBackground("TumbaAnalysis/Resources/info_button_border"..(self.infoButton.pressed and "_rollover" or "")..".tga");
     elseif (self.tab.showStats == 2) then
-      self.infoButton:SetBackground("CombatAnalysisGroup/Resources/info_button_quarter_border"..(self.infoButton.pressed and "_rollover" or "")..".tga");
+      self.infoButton:SetBackground("TumbaAnalysis/Resources/info_button_quarter_border"..(self.infoButton.pressed and "_rollover" or "")..".tga");
     else
-      self.infoButton:SetBackground("CombatAnalysisGroup/Resources/info_button"..(self.infoButton.pressed and "_rollover" or "")..".tga");
+      self.infoButton:SetBackground("TumbaAnalysis/Resources/info_button"..(self.infoButton.pressed and "_rollover" or "")..".tga");
     end
   end
   self.infoButton.MouseDown = function(sender, args)
@@ -297,26 +297,26 @@ function StatOverviewPanel:Constructor(tab,chatMenu,encounters,targets,hasTwoPar
     if (self.isBuffTab or self.tab.statsPanel.window == nil) then
       -- no mouse down image
     elseif (self.tab.showStats == 3) then
-      self.infoButton:SetBackground("CombatAnalysisGroup/Resources/info_button_border_pressed.tga");
+      self.infoButton:SetBackground("TumbaAnalysis/Resources/info_button_border_pressed.tga");
     elseif (self.tab.showStats == 2) then
-      self.infoButton:SetBackground("CombatAnalysisGroup/Resources/info_button_quarter_border_pressed.tga");
+      self.infoButton:SetBackground("TumbaAnalysis/Resources/info_button_quarter_border_pressed.tga");
     else
-      self.infoButton:SetBackground("CombatAnalysisGroup/Resources/info_button_pressed.tga");
+      self.infoButton:SetBackground("TumbaAnalysis/Resources/info_button_pressed.tga");
     end
   end
   self.infoButton.MouseUp = function(sender, args)
     self.infoButton.pressed = false;
     
     if (self.isBuffTab) then
-      self.infoButton:SetBackground("CombatAnalysisGroup/Resources/spanner"..(self.infoButton.mouseIn and "_mouseover" or "")..".tga");
+      self.infoButton:SetBackground("TumbaAnalysis/Resources/spanner"..(self.infoButton.mouseIn and "_mouseover" or "")..".tga");
     elseif (self.tab.statsPanel.window == nil) then
-      self.infoButton:SetBackground("CombatAnalysisGroup/Resources/gears"..(self.infoButton.mouseIn and "_mouseover" or "")..".tga");
+      self.infoButton:SetBackground("TumbaAnalysis/Resources/gears"..(self.infoButton.mouseIn and "_mouseover" or "")..".tga");
     elseif (self.tab.showStats == 3) then
-      self.infoButton:SetBackground("CombatAnalysisGroup/Resources/info_button_border"..(self.infoButton.mouseIn and "_rollover" or "")..".tga");
+      self.infoButton:SetBackground("TumbaAnalysis/Resources/info_button_border"..(self.infoButton.mouseIn and "_rollover" or "")..".tga");
     elseif (self.tab.showStats == 2) then
-      self.infoButton:SetBackground("CombatAnalysisGroup/Resources/info_button_quarter_border"..(self.infoButton.mouseIn and "_rollover" or "")..".tga");
+      self.infoButton:SetBackground("TumbaAnalysis/Resources/info_button_quarter_border"..(self.infoButton.mouseIn and "_rollover" or "")..".tga");
     else
-      self.infoButton:SetBackground("CombatAnalysisGroup/Resources/info_button"..(self.infoButton.mouseIn and "_rollover" or "")..".tga");
+      self.infoButton:SetBackground("TumbaAnalysis/Resources/info_button"..(self.infoButton.mouseIn and "_rollover" or "")..".tga");
     end
   end
   self.infoButton.MouseClick = function(sender, args)
@@ -327,7 +327,7 @@ function StatOverviewPanel:Constructor(tab,chatMenu,encounters,targets,hasTwoPar
     elseif (self.tab.statsPanel.window == nil) then
       uiMenuPanel.subMenuPane:SelectTab(3);
       menuPane:SelectTab(2);
-      Turbine.PluginManager.ShowOptions(Plugins["CombatAnalysisGroup"]);
+      Turbine.PluginManager.ShowOptions(Plugins["TumbaAnalysis"]);
     elseif (args.Button == Turbine.UI.MouseButton.Left) then
       self.tab:SetShowStats(math.min(self.tab.showStats+1,3));
     elseif (args.Button == Turbine.UI.MouseButton.Right) then

@@ -7,7 +7,7 @@
 	
 	Due to the specialized manner in which data is saved,
 	the functionality of this window is actually pretty
-	specific to CombatAnalysisGroup.
+	specific to TumbaAnalysis.
 	
 	Note this class is forced to be a singleton, to ensure there
 	can only be one file select dialog open at once.
@@ -43,35 +43,35 @@ function FileSelectDialog:Constructor(text)
 	self.backButton:SetTop(53);
 	self.backButton:SetSize(19,16);
 	self.backButton:SetBlendMode(Turbine.UI.BlendMode.AlphaBlend);
-	self.backButton:SetBackground("CombatAnalysisGroup/Resources/back_button.tga");
+	self.backButton:SetBackground("TumbaAnalysis/Resources/back_button.tga");
 	
 	self.backButton.enabled = true;
 	self.backButton.SetEnabled = function(sender,enable)
 		self.backButton.enabled = enable;
-		self.backButton:SetBackground("CombatAnalysisGroup/Resources/back_button"..(self.backButton.enabled and "" or "_disabled")..".tga");
+		self.backButton:SetBackground("TumbaAnalysis/Resources/back_button"..(self.backButton.enabled and "" or "_disabled")..".tga");
 	end
 	
 	self.backButton.pressed = false;
 	self.backButton.MouseEnter = function(sender,args)
 		if (self.backButton.enabled) then
-			self.backButton:SetBackground("CombatAnalysisGroup/Resources/back_button_"..(self.backButton.pressed and "pressed" or "mouseover")..".tga");
+			self.backButton:SetBackground("TumbaAnalysis/Resources/back_button_"..(self.backButton.pressed and "pressed" or "mouseover")..".tga");
 		end
 	end
 	self.backButton.MouseLeave = function(sender,args)
 		if (self.backButton.enabled) then
-			self.backButton:SetBackground("CombatAnalysisGroup/Resources/back_button"..(self.backButton.pressed and "_mouseover" or "")..".tga");
+			self.backButton:SetBackground("TumbaAnalysis/Resources/back_button"..(self.backButton.pressed and "_mouseover" or "")..".tga");
 		end
 	end
 	self.backButton.MouseDown = function(sender,args)
 		if (self.backButton.enabled) then
 			self.backButton.pressed = true;
-			self.backButton:SetBackground("CombatAnalysisGroup/Resources/back_button_pressed.tga");
+			self.backButton:SetBackground("TumbaAnalysis/Resources/back_button_pressed.tga");
 		end
 	end
 	self.backButton.MouseUp = function(sender,args)
 		if (self.backButton.enabled) then
 			self.backButton.pressed = false;
-			self.backButton:SetBackground("CombatAnalysisGroup/Resources/back_button.tga");
+			self.backButton:SetBackground("TumbaAnalysis/Resources/back_button.tga");
 		end
 	end
 	
@@ -87,12 +87,12 @@ function FileSelectDialog:Constructor(text)
 	self.forwardButton:SetTop(53);
 	self.forwardButton:SetSize(19,15);
 	self.forwardButton:SetBlendMode(Turbine.UI.BlendMode.AlphaBlend);
-	self.forwardButton:SetBackground("CombatAnalysisGroup/Resources/forward_button.tga");
+	self.forwardButton:SetBackground("TumbaAnalysis/Resources/forward_button.tga");
 	
 	self.forwardButton.enabled = true;
 	self.forwardButton.SetEnabled = function(sender,enable)
 		self.forwardButton.enabled = enable;
-		self.forwardButton:SetBackground("CombatAnalysisGroup/Resources/forward_button"..(self.forwardButton.enabled and "" or "_disabled")..".tga");
+		self.forwardButton:SetBackground("TumbaAnalysis/Resources/forward_button"..(self.forwardButton.enabled and "" or "_disabled")..".tga");
 	end
 	self.forwardButton.CheckEnabled = function(sender)
 		self.forwardButton:SetEnabled(self.fileMode and (self.saveMode or (self.selectDataCheckBox:IsChecked() and self.fileNameTextBox:GetText() ~= "")));
@@ -101,24 +101,24 @@ function FileSelectDialog:Constructor(text)
 	self.forwardButton.pressed = false;
 	self.forwardButton.MouseEnter = function(sender,args)
 		if (self.forwardButton.enabled) then
-			self.forwardButton:SetBackground("CombatAnalysisGroup/Resources/forward_button_"..(self.forwardButton.pressed and "pressed" or "mouseover")..".tga");
+			self.forwardButton:SetBackground("TumbaAnalysis/Resources/forward_button_"..(self.forwardButton.pressed and "pressed" or "mouseover")..".tga");
 		end
 	end
 	self.forwardButton.MouseLeave = function(sender,args)
 		if (self.forwardButton.enabled) then
-			self.forwardButton:SetBackground("CombatAnalysisGroup/Resources/forward_button"..(self.forwardButton.pressed and "_mouseover" or "")..".tga");
+			self.forwardButton:SetBackground("TumbaAnalysis/Resources/forward_button"..(self.forwardButton.pressed and "_mouseover" or "")..".tga");
 		end
 	end
 	self.forwardButton.MouseDown = function(sender,args)
 		if (self.forwardButton.enabled) then
 			self.forwardButton.pressed = true;
-			self.forwardButton:SetBackground("CombatAnalysisGroup/Resources/forward_button_pressed.tga");
+			self.forwardButton:SetBackground("TumbaAnalysis/Resources/forward_button_pressed.tga");
 		end
 	end
 	self.forwardButton.MouseUp = function(sender,args)
 		if (self.forwardButton.enabled) then
 			self.forwardButton.pressed = false;
-			self.forwardButton:SetBackground("CombatAnalysisGroup/Resources/forward_button.tga");
+			self.forwardButton:SetBackground("TumbaAnalysis/Resources/forward_button.tga");
 		end
 	end
 	

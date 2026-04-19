@@ -29,36 +29,36 @@ _G.controlDisabledColor = Turbine.UI.Color(0.42,0.42,0.4); -- dark grey
 
 -- imports
 
-import "CombatAnalysisGroup.UI.Cursor"
+import "TumbaAnalysis.UI.Cursor"
 
-import "CombatAnalysisGroup.UI.TooltipManager"
-import "CombatAnalysisGroup.UI.Tooltip"
+import "TumbaAnalysis.UI.TooltipManager"
+import "TumbaAnalysis.UI.Tooltip"
 
-import "CombatAnalysisGroup.UI.DragBar"
+import "TumbaAnalysis.UI.DragBar"
 
-import "CombatAnalysisGroup.UI.WindowManager"
-import "CombatAnalysisGroup.UI.Window"
-import "CombatAnalysisGroup.UI.ResizableWindow"
+import "TumbaAnalysis.UI.WindowManager"
+import "TumbaAnalysis.UI.Window"
+import "TumbaAnalysis.UI.ResizableWindow"
 
-import "CombatAnalysisGroup.UI.DialogManager"
-import "CombatAnalysisGroup.UI.Dialog"
+import "TumbaAnalysis.UI.DialogManager"
+import "TumbaAnalysis.UI.Dialog"
 
-import "CombatAnalysisGroup.UI.SuggestionsPopup"
-import "CombatAnalysisGroup.UI.SuggestionsTextBox"
+import "TumbaAnalysis.UI.SuggestionsPopup"
+import "TumbaAnalysis.UI.SuggestionsTextBox"
 
-import "CombatAnalysisGroup.UI.NotificationIcon"
+import "TumbaAnalysis.UI.NotificationIcon"
 
-import "CombatAnalysisGroup.UI.Tab"
-import "CombatAnalysisGroup.UI.TabbedPane"
+import "TumbaAnalysis.UI.Tab"
+import "TumbaAnalysis.UI.TabbedPane"
 
-import "CombatAnalysisGroup.UI.MenuLabel"
-import "CombatAnalysisGroup.UI.MenuCheckBox"
-import "CombatAnalysisGroup.UI.PanelDivider"
-import "CombatAnalysisGroup.UI.LabelledComboBox"
-import "CombatAnalysisGroup.UI.ColoredLabelledComboBox"
-import "CombatAnalysisGroup.UI.Slider"
-import "CombatAnalysisGroup.UI.ColorPicker"
+import "TumbaAnalysis.UI.MenuLabel"
+import "TumbaAnalysis.UI.MenuCheckBox"
+import "TumbaAnalysis.UI.PanelDivider"
+import "TumbaAnalysis.UI.LabelledComboBox"
+import "TumbaAnalysis.UI.ColoredLabelledComboBox"
+import "TumbaAnalysis.UI.Slider"
+import "TumbaAnalysis.UI.ColorPicker"
 
-import "CombatAnalysisGroup.UI.FileSelectDialog"
+import "TumbaAnalysis.UI.FileSelectDialog"
 
-import "CombatAnalysisGroup.UI.CombatAnalysisSpecific"
+import "TumbaAnalysis.UI.CombatAnalysisSpecific"

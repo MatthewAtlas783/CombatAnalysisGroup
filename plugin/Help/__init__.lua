@@ -1,1 +1,1 @@
-import "CombatAnalysisGroup.Help.TutorialHint";
+import "TumbaAnalysis.Help.TutorialHint";
