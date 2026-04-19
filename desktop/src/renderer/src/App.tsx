@@ -17,6 +17,10 @@ const initialState: AppState = {
   account: undefined,
   local: undefined,
   players: {},
+  roomInCombat: false,
+  currentEncounter: undefined,
+  history: [],
+  selectedEncounterId: undefined,
   bootError: undefined,
 };
 

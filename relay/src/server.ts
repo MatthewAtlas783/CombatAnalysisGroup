@@ -56,6 +56,7 @@ function parse(raw: unknown): ClientMessage | undefined {
           player: obj.player,
           amount: obj.amount,
           duration: obj.duration,
+          inCombat: typeof obj.inCombat === 'boolean' ? obj.inCombat : false,
         };
       }
       return undefined;
@@ -97,6 +98,7 @@ wss.on('connection', (socket, req) => {
         msg.player,
         msg.amount,
         msg.duration,
+        msg.inCombat,
       );
       if (!room) sendError(socket, 'join a room before sending stats');
     } else if (msg.type === 'leave') {

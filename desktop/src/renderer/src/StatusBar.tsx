@@ -47,6 +47,13 @@ export function StatusBar({ state, now }: { state: AppState; now: number }) {
         {state.room && (
           <span className="status-hint">{state.joined ? 'joined' : 'pending'}</span>
         )}
+        {state.joined && (
+          <span
+            className={`combat-pill ${state.roomInCombat ? 'combat-pill-active' : 'combat-pill-idle'}`}
+          >
+            {state.roomInCombat ? 'in combat' : 'idle'}
+          </span>
+        )}
       </div>
 
       <div className="status-row">

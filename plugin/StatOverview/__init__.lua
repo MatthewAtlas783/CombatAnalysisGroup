@@ -94,33 +94,72 @@ function _G.takenTab:GetDataForPlayer(player,includeTotals,category) return comb
 function _G.healTab:GetDataForPlayer(player,includeTotals,category) return combatData.selectedRestore:GetPlayerData(player,"heal"..(category or ""),includeTotals) end
 function _G.powerTab:GetDataForPlayer(player,includeTotals,category) return combatData.selectedRestore:GetPlayerData(player,"power"..(category or ""),includeTotals) end
 
--- Group tab: data sourced from external plugindata file written by the companion app.
--- _G.cag_groupData is a {playerName -> summaryData} table maintained by the poller in main.lua.
+-- Group tab: data sourced from external plugindata file written by the desktop app.
+-- The desktop app tracks room-level encounters (starts when anyone enters combat,
+-- closes ~5s after everyone leaves). The plugin reflects that state so Group tab
+-- numbers stay aligned with actual fight windows instead of showing stale cumulative.
 -- Shape matches what StatOverviewBar:UpdateData/StatOverviewBarsPanel:FullUpdate read:
 --   .empty, .amount, .attacks, .absorbs, :TotalAmount()
 local groupDataMt = { __index = { TotalAmount = function(self) return self.amount end } }
 _G.cag_groupData = {}
-_G.cag_BuildGroupData = function(raw)
+_G.cag_groupRoomInCombat = false
+_G.cag_groupCurrent = nil      -- current room encounter (or nil when idle)
+_G.cag_groupHistory = {}       -- list of past encounters, newest-first
+
+local function cag_buildPlayersMap(playersTbl)
   local out = {}
-  if (type(raw) ~= "table" or type(raw.players) ~= "table") then return out end
-  for name,amount in pairs(raw.players) do
-    if (type(amount) == "number") then
-      out[name] = setmetatable({
-        amount = amount,
-        empty = (amount <= 0),
-        attacks = (amount > 0 and 1 or 0), -- prevents div-by-zero in StatOverviewBar:177
-        absorbs = 0,
-        min = amount, max = amount,
-      }, groupDataMt)
+  if (type(playersTbl) ~= "table") then return out end
+  for name,val in pairs(playersTbl) do
+    local amount;
+    if (type(val) == "number") then
+      amount = val;
+    elseif (type(val) == "table" and type(val.amount) == "number") then
+      amount = val.amount;
+    else
+      amount = 0;
     end
+    out[name] = setmetatable({
+      amount = amount,
+      empty = (amount <= 0),
+      attacks = (amount > 0 and 1 or 0), -- prevents div-by-zero in StatOverviewBar:177
+      absorbs = 0,
+      min = amount, max = amount,
+    }, groupDataMt)
   end
   return out
 end
+
+_G.cag_BuildGroupData = function(raw)
+  -- Preserves backward-compat with old desktop builds that only emit `players`.
+  -- New shape additionally carries roomInCombat + current + history.
+  if (type(raw) ~= "table") then
+    _G.cag_groupRoomInCombat = false
+    _G.cag_groupCurrent = nil
+    _G.cag_groupHistory = {}
+    return {}
+  end
+  _G.cag_groupRoomInCombat = (raw.roomInCombat == true)
+  _G.cag_groupCurrent = (type(raw.current) == "table") and raw.current or nil
+  _G.cag_groupHistory = (type(raw.history) == "table") and raw.history or {}
+  -- Default display: live current encounter when in combat, otherwise most
+  -- recent closed encounter. Falls back to the legacy `players` map if the
+  -- desktop hasn't yet sent encounter-shaped data.
+  local source;
+  if (_G.cag_groupCurrent ~= nil and type(_G.cag_groupCurrent.players) == "table") then
+    source = _G.cag_groupCurrent.players
+  elseif (_G.cag_groupHistory[1] ~= nil and type(_G.cag_groupHistory[1].players) == "table") then
+    source = _G.cag_groupHistory[1].players
+  else
+    source = raw.players
+  end
+  return cag_buildPlayersMap(source)
+end
+
 function _G.groupTab:GetData() return _G.cag_groupData end
 function _G.groupTab:GetDataForPlayer(player,includeTotals,category) return _G.cag_groupData end
 
--- Seed with placeholder rows so the tab is visibly populated before any companion-app data arrives.
-_G.cag_groupData = _G.cag_BuildGroupData({ players = { ["Waiting for companion..."] = 1 } })
+-- Seed with placeholder rows so the tab is visibly populated before any desktop-app data arrives.
+_G.cag_groupData = _G.cag_BuildGroupData({ players = { ["Waiting for desktop app..."] = 1 } })
 
 -- Poller: reads CAGroupData plugindata file (written by external companion app) every few
 -- seconds and updates _G.cag_groupData. Stored as a global to avoid GC of the host Control
@@ -129,7 +168,7 @@ _G.cagGroupPoller = Turbine.UI.Control();
 _G.cagGroupPoller:SetWantsUpdates(true);
 _G.cag_groupLastPollAt = 0;
 _G.cag_groupPendingPoll = false;
-_G.cag_groupPollIntervalSec = 3;
+_G.cag_groupPollIntervalSec = 0.5;
 _G.cagGroupPoller.Update = function()
   local now = Turbine.Engine.GetGameTime();
   if (now - _G.cag_groupLastPollAt < _G.cag_groupPollIntervalSec) then return end
@@ -158,22 +197,16 @@ end
 _G.cagLocalWriter = Turbine.UI.Control();
 _G.cagLocalWriter:SetWantsUpdates(true);
 _G.cag_localLastWriteAt = 0;
-_G.cag_localWriteIntervalSec = 1;
+_G.cag_localWriteIntervalSec = 0.5;
 _G.cag_localLastAmount = -1;
 _G.cag_localLastDuration = -1;
+_G.cag_localPrevInCombat = false;
 
 local function cag_collectLocalStats()
   if (combatData == nil) then return nil end
-  -- Prefer currentEncounter for per-fight reset behavior; fall back to the most
-  -- recent encounter so the last fight's numbers stay visible between pulls.
+  -- currentEncounter is the active fight; it's also the most recent fight
+  -- between combats, so we just read it directly.
   local enc = combatData.currentEncounter;
-  if (enc == nil and combatData.combatElements ~= nil) then
-    -- combatElements is ordered newest-last; walk backwards to find the latest encounter
-    for i = #combatData.combatElements, 1, -1 do
-      local el = combatData.combatElements[i];
-      if (el ~= nil and el.orderedMobs ~= nil) then enc = el; break end
-    end
-  end
   if (enc == nil) then return nil end
   local mob = enc.orderedMobs and enc.orderedMobs[1];
   if (mob == nil or mob.players == nil) then return nil end
@@ -192,18 +225,24 @@ end
 
 _G.cagLocalWriter.Update = function()
   local now = Turbine.Engine.GetGameTime();
-  if (now - _G.cag_localLastWriteAt < _G.cag_localWriteIntervalSec) then return end
+  -- Detect combat-start transition: force an immediate write so the new
+  -- encounter (and any reset) propagates without waiting for the throttle.
+  local inCombat = (combatData ~= nil and combatData.inCombat) and true or false;
+  local justEnteredCombat = (inCombat and not _G.cag_localPrevInCombat);
+  _G.cag_localPrevInCombat = inCombat;
+  if (not justEnteredCombat and now - _G.cag_localLastWriteAt < _G.cag_localWriteIntervalSec) then return end
   _G.cag_localLastWriteAt = now;
   local amount, duration = cag_collectLocalStats();
   if (amount == nil) then return end
   -- skip writes when nothing changed (durations tick continuously, so use rounded compare)
   local roundedDuration = math.floor(duration * 10) / 10;
-  if (amount == _G.cag_localLastAmount and roundedDuration == _G.cag_localLastDuration) then return end
+  if (not justEnteredCombat and amount == _G.cag_localLastAmount and roundedDuration == _G.cag_localLastDuration) then return end
   _G.cag_localLastAmount = amount;
   _G.cag_localLastDuration = roundedDuration;
   pcall(Turbine.PluginData.Save, Turbine.DataScope.Account, "CALocalStats", {
     player = player.name,
     amount = amount,
     duration = roundedDuration,
+    inCombat = inCombat,
   });
 end

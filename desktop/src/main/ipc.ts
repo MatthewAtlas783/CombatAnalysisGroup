@@ -11,6 +11,9 @@ export function registerIpc(service: Service): void {
     return next;
   });
   ipcMain.on('action:reconnect', () => service.reconnect());
+  ipcMain.on('action:selectEncounter', (_e, id: number | undefined) => {
+    service.selectEncounter(id);
+  });
 
   service.on('state', (state: AppState) => {
     for (const win of BrowserWindow.getAllWindows()) {

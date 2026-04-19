@@ -2,10 +2,14 @@ import { EventEmitter } from 'node:events';
 import { findPluginDataDir, pickAccount, accountScopePath } from './paths.js';
 import { readPluginData, watchPluginData, writePluginData } from './plugindata.js';
 import { RelayClient, type RelayStatus } from './relay.js';
-import type { ServerMessage } from './protocol.js';
+import type {
+  EncounterSummary,
+  PlayerSnapshot,
+  ServerMessage,
+} from './protocol.js';
 import { getSettings, type Settings } from './settings.js';
 
-export type Player = { amount: number; duration: number; updatedAt: number };
+export type Player = PlayerSnapshot;
 
 export type AppState = {
   relayStatus: RelayStatus;
@@ -17,14 +21,18 @@ export type AppState = {
   inputPath: string | undefined;
   outputPath: string | undefined;
   account: string | undefined;
-  local: { amount: number; duration: number; updatedAt: number } | undefined;
+  local: { amount: number; duration: number; updatedAt: number; inCombat: boolean } | undefined;
   players: Record<string, Player>;
+  roomInCombat: boolean;
+  currentEncounter: EncounterSummary | undefined;
+  history: EncounterSummary[];
+  selectedEncounterId: number | undefined;
   bootError: string | undefined;
 };
 
 const LOCAL_KEY = 'CALocalStats';
 const GROUP_KEY = 'CAGroupData';
-const SEND_INTERVAL_MS = 1500;
+const SEND_INTERVAL_MS = 500;
 
 function defaultState(): AppState {
   return {
@@ -39,6 +47,10 @@ function defaultState(): AppState {
     account: undefined,
     local: undefined,
     players: {},
+    roomInCombat: false,
+    currentEncounter: undefined,
+    history: [],
+    selectedEncounterId: undefined,
     bootError: undefined,
   };
 }
@@ -63,6 +75,10 @@ export class Service extends EventEmitter {
 
   applySettings(): void {
     this.restartFromSettings();
+  }
+
+  selectEncounter(id: number | undefined): void {
+    this.patch({ selectedEncounterId: id });
   }
 
   shutdown(): void {
@@ -122,13 +138,14 @@ export class Service extends EventEmitter {
         if (msg.type === 'joined') {
           this.patch({ joined: true, room: msg.room });
         } else if (msg.type === 'snapshot') {
-          this.patch({ players: msg.players });
+          this.patch({
+            players: msg.players,
+            roomInCombat: msg.roomInCombat,
+            currentEncounter: msg.current,
+            history: msg.history,
+          });
           try {
-            const playersOut: Record<string, number> = {};
-            for (const [name, data] of Object.entries(msg.players)) {
-              playersOut[name] = data.amount;
-            }
-            writePluginData(outputPath, { players: playersOut, updatedAt: Date.now() });
+            writePluginData(outputPath, buildPluginPayload(msg));
           } catch {
             /* swallow — surfaced via state on next attempt */
           }
@@ -142,7 +159,12 @@ export class Service extends EventEmitter {
       if (!snap) return;
       this.patch({
         player: snap.player,
-        local: { amount: snap.amount, duration: snap.duration, updatedAt: Date.now() },
+        local: {
+          amount: snap.amount,
+          duration: snap.duration,
+          inCombat: snap.inCombat,
+          updatedAt: Date.now(),
+        },
       });
       if (!this.state.joined && this.state.relayStatus === 'connected' && this.relay) {
         this.relay.send({ type: 'join', room: settings.room, player: snap.player });
@@ -155,7 +177,12 @@ export class Service extends EventEmitter {
       if (snap) {
         this.patch({
           player: snap.player,
-          local: { amount: snap.amount, duration: snap.duration, updatedAt: Date.now() },
+          local: {
+            amount: snap.amount,
+            duration: snap.duration,
+            inCombat: snap.inCombat,
+            updatedAt: Date.now(),
+          },
         });
       }
     } catch {
@@ -167,7 +194,13 @@ export class Service extends EventEmitter {
       const local = this.state.local;
       const player = this.state.player;
       if (!local || !player) return;
-      this.relay.send({ type: 'stats', player, amount: local.amount, duration: local.duration });
+      this.relay.send({
+        type: 'stats',
+        player,
+        amount: local.amount,
+        duration: local.duration,
+        inCombat: local.inCombat,
+      });
     }, SEND_INTERVAL_MS);
 
     this.relay.connect();
@@ -179,7 +212,12 @@ export class Service extends EventEmitter {
   }
 }
 
-type LocalSnapshot = { player: string; amount: number; duration: number };
+type LocalSnapshot = {
+  player: string;
+  amount: number;
+  duration: number;
+  inCombat: boolean;
+};
 
 function asLocalSnapshot(raw: unknown, fallbackPlayer: string | undefined): LocalSnapshot | undefined {
   if (!raw || typeof raw !== 'object') return undefined;
@@ -187,6 +225,32 @@ function asLocalSnapshot(raw: unknown, fallbackPlayer: string | undefined): Loca
   const player = (typeof r.player === 'string' && r.player) || fallbackPlayer;
   const amount = typeof r.amount === 'number' ? r.amount : undefined;
   const duration = typeof r.duration === 'number' ? r.duration : 0;
+  const inCombat = typeof r.inCombat === 'boolean' ? r.inCombat : false;
   if (!player || amount === undefined) return undefined;
-  return { player, amount, duration };
+  return { player, amount, duration, inCombat };
+}
+
+function buildPluginPayload(
+  msg: Extract<ServerMessage, { type: 'snapshot' }>,
+): Record<string, unknown> {
+  // Live `players` map kept for backward compat with plugin's BuildGroupData
+  // (reads raw.players). Prefer current encounter's per-player amounts when
+  // a room encounter is active; otherwise fall back to cumulative snapshot.
+  const playersOut: Record<string, number> = {};
+  if (msg.current) {
+    for (const [name, p] of Object.entries(msg.current.players)) {
+      playersOut[name] = p.amount;
+    }
+  } else {
+    for (const [name, p] of Object.entries(msg.players)) {
+      playersOut[name] = p.amount;
+    }
+  }
+  return {
+    players: playersOut,
+    roomInCombat: msg.roomInCombat,
+    current: msg.current ?? null,
+    history: msg.history,
+    updatedAt: Date.now(),
+  };
 }

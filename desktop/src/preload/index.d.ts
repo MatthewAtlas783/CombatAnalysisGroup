@@ -8,6 +8,7 @@ declare global {
       getSettings: () => Promise<Settings>;
       updateSettings: (patch: Partial<Settings>) => Promise<Settings>;
       reconnect: () => void;
+      selectEncounter: (id: number | undefined) => void;
       onStateUpdate: (listener: (state: AppState) => void) => () => void;
     };
   }

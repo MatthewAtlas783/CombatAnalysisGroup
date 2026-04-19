@@ -9,7 +9,7 @@ import type { ServerMessage } from './protocol.js';
 
 const LOCAL_KEY = 'CALocalStats';
 const GROUP_KEY = 'CAGroupData';
-const SEND_INTERVAL_MS = 1500;
+const SEND_INTERVAL_MS = 500;
 
 type LocalSnapshot = { player: string; amount: number; duration: number };
 
