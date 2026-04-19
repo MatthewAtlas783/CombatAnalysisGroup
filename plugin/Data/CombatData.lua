@@ -174,6 +174,9 @@ function CombatData:Update(updateType,timestamp,playerName,targetName,skillName,
 		powerTab:SetWantsUpdates(true);
 		debuffTab:SetWantsUpdates(true);
 		buffTab:SetWantsUpdates(true);
+		-- TumbaAnalysis: include the Group tab so its timer/DPS labels tick every
+		-- frame in combat instead of only on the (slower) plugindata poll.
+		if (_G.groupTab ~= nil) then groupTab:SetWantsUpdates(true) end
 		
 	-- combat exited
 	elseif updateType == event_type.COMBAT_END then
@@ -188,6 +191,9 @@ function CombatData:Update(updateType,timestamp,playerName,targetName,skillName,
 		powerTab:SetWantsUpdates(false);
 		debuffTab:SetWantsUpdates(false);
 		buffTab:SetWantsUpdates(false);
+		-- TumbaAnalysis: stop the Group tab's per-frame ticker now that combat
+		-- ended; the cagGroupPoller's slower repaint cadence keeps it fresh.
+		if (_G.groupTab ~= nil) then groupTab:SetWantsUpdates(false) end
 		
 		-- update all tabs with final terminated durations
 		dmgTab:FullUpdate();

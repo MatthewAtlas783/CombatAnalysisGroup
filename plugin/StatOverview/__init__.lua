@@ -161,33 +161,39 @@ function _G.groupTab:GetDataForPlayer(player,includeTotals,category) return _G.c
 -- Seed with placeholder rows so the tab is visibly populated before any desktop-app data arrives.
 _G.cag_groupData = _G.cag_BuildGroupData({ players = { ["Waiting for desktop app..."] = 1 } })
 
--- Poller: reads CAGroupData plugindata file (written by external companion app) every few
--- seconds and updates _G.cag_groupData. Stored as a global to avoid GC of the host Control
--- (verified during POC: local hosts get GC'd after first callback).
+-- Poller: reads CAGroupData plugindata file (written by external companion app)
+-- and refreshes the Group tab. Two cadences:
+--   (a) data load every cag_groupLoadIntervalSec — Turbine.PluginData.Load is
+--       async and can be slow under load, so we DON'T gate the next load on
+--       the previous callback firing (a stuck callback would otherwise freeze
+--       all subsequent polls and the tab updates only every ~15s).
+--   (b) tab repaint every cag_groupRepaintIntervalSec — drives the duration/
+--       DPS labels via combatData state so the timer ticks smoothly even
+--       when no fresh data arrived from the desktop app.
+-- Stored as a global to avoid GC of the host Control (verified during POC:
+-- local hosts get GC'd after first callback).
 _G.cagGroupPoller = Turbine.UI.Control();
 _G.cagGroupPoller:SetWantsUpdates(true);
-_G.cag_groupLastPollAt = 0;
-_G.cag_groupPendingPoll = false;
-_G.cag_groupPollIntervalSec = 0.5;
+_G.cag_groupLastLoadAt = 0;
+_G.cag_groupLastRepaintAt = 0;
+_G.cag_groupLoadIntervalSec = 0.4;
+_G.cag_groupRepaintIntervalSec = 0.2;
 _G.cagGroupPoller.Update = function()
   local now = Turbine.Engine.GetGameTime();
-  if (now - _G.cag_groupLastPollAt < _G.cag_groupPollIntervalSec) then return end
-  if (_G.cag_groupPendingPoll) then return end
-  _G.cag_groupLastPollAt = now;
-  _G.cag_groupPendingPoll = true;
-  local ok = pcall(Turbine.PluginData.Load, Turbine.DataScope.Account, "CAGroupData", function(result)
-    _G.cag_groupPendingPoll = false;
-    if (type(result) == "table") then
-      _G.cag_groupData = _G.cag_BuildGroupData(result);
-      -- Force the Group tab to repaint with the new data. Other tabs refresh
-      -- naturally because combatData fires events; ours pulls from a separate
-      -- source so the panel doesn't know to re-render without a kick.
-      if (_G.groupTab ~= nil and _G.groupTab.panel ~= nil) then
-        pcall(_G.groupTab.FullUpdate, _G.groupTab, true);
+  if (now - _G.cag_groupLastLoadAt >= _G.cag_groupLoadIntervalSec) then
+    _G.cag_groupLastLoadAt = now;
+    pcall(Turbine.PluginData.Load, Turbine.DataScope.Account, "CAGroupData", function(result)
+      if (type(result) == "table") then
+        _G.cag_groupData = _G.cag_BuildGroupData(result);
       end
+    end);
+  end
+  if (now - _G.cag_groupLastRepaintAt >= _G.cag_groupRepaintIntervalSec) then
+    _G.cag_groupLastRepaintAt = now;
+    if (_G.groupTab ~= nil and _G.groupTab.panel ~= nil) then
+      pcall(_G.groupTab.FullUpdate, _G.groupTab, true);
     end
-  end);
-  if (not ok) then _G.cag_groupPendingPoll = false end
+  end
 end
 
 -- Local-stats writer: publishes the local player's CURRENT-encounter damage so
