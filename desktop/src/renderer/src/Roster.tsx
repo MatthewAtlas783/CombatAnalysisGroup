@@ -50,6 +50,7 @@ type ViewRow = {
   amount: number;
   duration: number;
   updatedAt: number;
+  online: boolean;
 };
 
 type ViewModel = {
@@ -106,12 +107,20 @@ export function Roster({ state, now }: { state: AppState; now: number }) {
           {rows.map((row, idx) => {
             const pct = Math.max(2, Math.min(100, (row.amount / top) * 100));
             const isMe = row.name === state.player;
+            const rowClass = [
+              'roster-row',
+              isMe ? 'me' : '',
+              row.online ? '' : 'offline',
+            ].filter(Boolean).join(' ');
             return (
-              <div key={row.name} className={`roster-row${isMe ? ' me' : ''}`}>
+              <div key={row.name} className={rowClass}>
                 <div className="roster-bar" style={{ width: pct + '%' }} />
                 <div className="roster-cells">
                   <span className="col col-rank">{idx + 1}</span>
-                  <span className="col col-player">{row.name}</span>
+                  <span className="col col-player">
+                    {row.name}
+                    {!row.online && <span className="offline-tag">offline</span>}
+                  </span>
                   <span className="col col-damage">{fmtNumber(row.amount)}</span>
                   <span className="col col-dps">{fmtRate(row.amount, row.duration)}</span>
                   {view.showAge && (
@@ -140,6 +149,7 @@ function pickView(state: AppState, now: number): ViewModel {
           amount: p.amount,
           duration: p.duration || dur,
           updatedAt: enc.endedAt ?? enc.startedAt,
+          online: state.players[name]?.online ?? true,
         })),
         title: `Encounter #${enc.id}`,
         subtitle: `${fmtClock(enc.startedAt)}${enc.endedAt ? ` → ${fmtClock(enc.endedAt)}` : ' · in progress'}`,
@@ -163,6 +173,7 @@ function pickView(state: AppState, now: number): ViewModel {
         amount: p.amount,
         duration: p.duration || dur,
         updatedAt: state.players[name]?.updatedAt ?? enc.startedAt,
+        online: state.players[name]?.online ?? true,
       })),
       title: 'Live encounter',
       subtitle: `started ${fmtClock(enc.startedAt)}`,
@@ -185,6 +196,7 @@ function pickView(state: AppState, now: number): ViewModel {
         amount: p.amount,
         duration: p.duration || dur,
         updatedAt: latest.endedAt ?? latest.startedAt,
+        online: state.players[name]?.online ?? true,
       })),
       title: `Last encounter · #${latest.id}`,
       subtitle: `${fmtClock(latest.startedAt)}${latest.endedAt ? ` → ${fmtClock(latest.endedAt)}` : ''} · idle`,

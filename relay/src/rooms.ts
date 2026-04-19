@@ -14,6 +14,7 @@ type Member = {
 type PlayerBaseline = {
   amount: number;
   duration: number;
+  attacks: number;
   lastReportedAmount: number;
 };
 
@@ -28,10 +29,13 @@ export type Room = {
   idleCloseTimer: NodeJS.Timeout | undefined;
   lastBroadcast: number;
   pendingTimer: NodeJS.Timeout | undefined;
+  // Per-player offline-eviction timers (3-min grace after disconnect).
+  offlineTimers: Map<string, NodeJS.Timeout>;
 };
 
 const PLAYER_TTL_MS = 5 * 60 * 1000;
-const BROADCAST_MIN_INTERVAL_MS = 250;
+const OFFLINE_GRACE_MS = 3 * 60 * 1000;
+const BROADCAST_MIN_INTERVAL_MS = 100;
 const ENCOUNTER_IDLE_CLOSE_MS = 5_000;
 const HISTORY_LIMIT = 30;
 
@@ -39,8 +43,26 @@ export class RoomRegistry {
   private rooms = new Map<string, Room>();
   private membership = new Map<WebSocket, { member: Member; room: Room }>();
 
+  /**
+   * Attach a socket to a room under `player`. Handles three cases:
+   *   - fresh socket joining a fresh name → normal add
+   *   - same socket re-joining under SAME name (e.g. reconnect after grace) → cancel offline TTL, mark online
+   *   - same socket re-joining under DIFFERENT name (character swap) → evict old name immediately, then add new
+   */
   join(socket: WebSocket, roomName: string, player: string): Room {
-    this.leave(socket);
+    const prior = this.membership.get(socket);
+    if (prior && prior.member.player !== player) {
+      // Character swap on the same socket — explicit eviction so the old
+      // character's cumulative damage doesn't linger in room.players.
+      this.evictPlayer(prior.room, prior.member.player);
+      prior.room.members.delete(prior.member);
+      this.membership.delete(socket);
+    } else if (prior && prior.member.player === player) {
+      // Same socket, same name → idempotent rejoin. Just refresh online state.
+      this.markOnline(prior.room, player);
+      return prior.room;
+    }
+
     let room = this.rooms.get(roomName);
     if (!room) {
       room = {
@@ -54,35 +76,70 @@ export class RoomRegistry {
         idleCloseTimer: undefined,
         lastBroadcast: 0,
         pendingTimer: undefined,
+        offlineTimers: new Map(),
       };
       this.rooms.set(roomName, room);
     }
     const member: Member = { socket, player };
     room.members.add(member);
     this.membership.set(socket, { member, room });
+    // Reconnect-while-stats-still-cached: clear any pending offline TTL and
+    // mark online so other peers see them light up immediately.
+    this.markOnline(room, player);
+    this.scheduleBroadcast(room);
     return room;
   }
 
+  /**
+   * Explicit leave (client sent {type:'leave'}). Immediately evicts the
+   * player from room state — no grace period. This is intentional: the
+   * client is telling us "I'm done, drop me."
+   */
   leave(socket: WebSocket): void {
     const entry = this.membership.get(socket);
     if (!entry) return;
     entry.room.members.delete(entry.member);
     this.membership.delete(socket);
-    // Evict the player's snapshot & baseline too — otherwise when a user
-    // swaps characters (socket rejoins under a new name) the old character's
-    // cumulative damage lingers in room.players until the 5-minute TTL.
-    entry.room.players.delete(entry.member.player);
-    entry.room.baselines.delete(entry.member.player);
-    if (entry.room.current) {
-      delete entry.room.current.players[entry.member.player];
+    this.evictPlayer(entry.room, entry.member.player);
+    this.cleanupRoomIfEmpty(entry.room);
+  }
+
+  /**
+   * Socket dropped (network blip, app close, crash). Mark the player offline
+   * and start a 3-minute TTL — keeps their last-known stats visible to peers
+   * during the grace window so logoffs don't yank rows out from under them.
+   * If they reconnect within the window, join() cancels the TTL.
+   */
+  markOffline(socket: WebSocket): void {
+    const entry = this.membership.get(socket);
+    if (!entry) return;
+    entry.room.members.delete(entry.member);
+    this.membership.delete(socket);
+
+    const room = entry.room;
+    const player = entry.member.player;
+    const snap = room.players.get(player);
+    if (snap) {
+      snap.online = false;
+      snap.updatedAt = Date.now();
     }
-    if (entry.room.members.size === 0) {
-      if (entry.room.pendingTimer) clearTimeout(entry.room.pendingTimer);
-      if (entry.room.idleCloseTimer) clearTimeout(entry.room.idleCloseTimer);
-      this.rooms.delete(entry.room.name);
-    } else {
-      this.scheduleBroadcast(entry.room);
-    }
+
+    // Replace any existing TTL so a flapping client still gets a fresh window.
+    const existing = room.offlineTimers.get(player);
+    if (existing) clearTimeout(existing);
+    const timer = setTimeout(() => {
+      room.offlineTimers.delete(player);
+      // Only evict if they're still offline — a reconnect would have cleared
+      // this timer via markOnline(), so seeing it fire means no reconnect.
+      const stillOffline = !room.players.get(player)?.online;
+      if (stillOffline) {
+        this.evictPlayer(room, player);
+        this.scheduleBroadcast(room);
+        this.cleanupRoomIfEmpty(room);
+      }
+    }, OFFLINE_GRACE_MS);
+    room.offlineTimers.set(player, timer);
+    this.scheduleBroadcast(room);
   }
 
   recordStats(
@@ -90,6 +147,7 @@ export class RoomRegistry {
     player: string,
     amount: number,
     duration: number,
+    attacks: number,
     inCombat: boolean,
   ): Room | undefined {
     const entry = this.membership.get(socket);
@@ -106,10 +164,20 @@ export class RoomRegistry {
       this.startEncounter(room, now);
     }
 
-    room.players.set(player, { amount, duration, updatedAt: now, inCombat });
+    const prev = room.players.get(player);
+    room.players.set(player, {
+      amount,
+      duration,
+      attacks,
+      updatedAt: now,
+      inCombat,
+      online: true,
+    });
+    // Stats arriving means they're alive — clear any offline TTL.
+    if (prev && !prev.online) this.markOnline(room, player);
 
     if (room.current) {
-      this.updateEncounterPlayer(room, player, amount, duration);
+      this.updateEncounterPlayer(room, player, amount, duration, attacks);
     }
 
     this.refreshIdleTimer(room);
@@ -157,6 +225,7 @@ export class RoomRegistry {
       room.baselines.set(name, {
         amount: snap.amount,
         duration: snap.duration,
+        attacks: snap.attacks,
         lastReportedAmount: snap.amount,
       });
     }
@@ -167,11 +236,22 @@ export class RoomRegistry {
     player: string,
     reportedAmount: number,
     reportedDuration: number,
+    reportedAttacks: number,
   ): void {
     if (!room.current) return;
     let baseline = room.baselines.get(player);
     if (!baseline) {
-      baseline = { amount: 0, duration: 0, lastReportedAmount: 0 };
+      // Mid-encounter join: this player's first stats arrived AFTER the
+      // encounter was already open. Without a baseline, delta would be the
+      // player's full plugin-cumulative (often billions). Anchor baseline to
+      // the reported values so first delta = 0 and subsequent damage counts
+      // from this point onward.
+      baseline = {
+        amount: reportedAmount,
+        duration: reportedDuration,
+        attacks: reportedAttacks,
+        lastReportedAmount: reportedAmount,
+      };
       room.baselines.set(player, baseline);
     }
     // Plugin reset (new local encounter) — reported drops below last seen.
@@ -179,12 +259,14 @@ export class RoomRegistry {
     if (reportedAmount < baseline.lastReportedAmount) {
       baseline.amount = 0;
       baseline.duration = 0;
+      baseline.attacks = 0;
     }
     baseline.lastReportedAmount = reportedAmount;
 
     const amount = Math.max(0, reportedAmount - baseline.amount);
     const duration = Math.max(0, reportedDuration - baseline.duration);
-    const entry: EncounterPlayer = { amount, duration };
+    const attacks = Math.max(0, reportedAttacks - baseline.attacks);
+    const entry: EncounterPlayer = { amount, duration, attacks };
     room.current.players[player] = entry;
   }
 
@@ -215,11 +297,44 @@ export class RoomRegistry {
   private pruneExpired(room: Room): void {
     const cutoff = Date.now() - PLAYER_TTL_MS;
     for (const [name, data] of room.players) {
-      if (data.updatedAt < cutoff) {
-        room.players.delete(name);
-        room.baselines.delete(name);
+      // Don't TTL out players who are within the offline grace window — that
+      // path has its own (shorter) timer and is the authoritative cleanup.
+      if (data.online && data.updatedAt < cutoff) {
+        this.evictPlayer(room, name);
       }
     }
+  }
+
+  private evictPlayer(room: Room, player: string): void {
+    room.players.delete(player);
+    room.baselines.delete(player);
+    if (room.current) delete room.current.players[player];
+    const t = room.offlineTimers.get(player);
+    if (t) {
+      clearTimeout(t);
+      room.offlineTimers.delete(player);
+    }
+  }
+
+  private markOnline(room: Room, player: string): void {
+    const t = room.offlineTimers.get(player);
+    if (t) {
+      clearTimeout(t);
+      room.offlineTimers.delete(player);
+    }
+    const snap = room.players.get(player);
+    if (snap && !snap.online) {
+      snap.online = true;
+      snap.updatedAt = Date.now();
+    }
+  }
+
+  private cleanupRoomIfEmpty(room: Room): void {
+    if (room.members.size > 0) return;
+    if (room.offlineTimers.size > 0) return; // still expecting reconnects
+    if (room.pendingTimer) clearTimeout(room.pendingTimer);
+    if (room.idleCloseTimer) clearTimeout(room.idleCloseTimer);
+    this.rooms.delete(room.name);
   }
 
   private scheduleBroadcast(room: Room): void {
@@ -240,7 +355,7 @@ export class RoomRegistry {
 function cloneEncounter(enc: EncounterSummary): EncounterSummary {
   const players: Record<string, EncounterPlayer> = {};
   for (const [name, p] of Object.entries(enc.players)) {
-    players[name] = { amount: p.amount, duration: p.duration };
+    players[name] = { amount: p.amount, duration: p.duration, attacks: p.attacks };
   }
   return {
     id: enc.id,

@@ -476,6 +476,26 @@ input:focus {
   color: var(--accent);
 }
 
+.roster-row.offline {
+  opacity: 0.55;
+}
+
+.roster-row.offline .roster-bar {
+  opacity: 0.15;
+}
+
+.offline-tag {
+  margin-left: 6px;
+  padding: 1px 5px;
+  border-radius: 3px;
+  background: var(--border);
+  color: var(--text-faint);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
 .col-player {
   flex: 1;
   font-weight: 500;

@@ -110,18 +110,24 @@ local function cag_buildPlayersMap(playersTbl)
   local out = {}
   if (type(playersTbl) ~= "table") then return out end
   for name,val in pairs(playersTbl) do
-    local amount;
+    local amount, attacks;
     if (type(val) == "number") then
       amount = val;
-    elseif (type(val) == "table" and type(val.amount) == "number") then
-      amount = val.amount;
+      attacks = 1;
+    elseif (type(val) == "table") then
+      amount = (type(val.amount) == "number" and val.amount) or 0;
+      attacks = (type(val.attacks) == "number" and val.attacks) or 1;
     else
       amount = 0;
+      attacks = 1;
     end
+    -- StatOverviewBar:177 divides by attacks for the avg column — must be >=1
+    -- even on empty rows to avoid div-by-zero.
+    if (attacks < 1) then attacks = 1 end
     out[name] = setmetatable({
       amount = amount,
       empty = (amount <= 0),
-      attacks = (amount > 0 and 1 or 0), -- prevents div-by-zero in StatOverviewBar:177
+      attacks = attacks,
       absorbs = 0,
       min = amount, max = amount,
     }, groupDataMt)
@@ -176,8 +182,8 @@ _G.cagGroupPoller = Turbine.UI.Control();
 _G.cagGroupPoller:SetWantsUpdates(true);
 _G.cag_groupLastLoadAt = 0;
 _G.cag_groupLastRepaintAt = 0;
-_G.cag_groupLoadIntervalSec = 0.4;
-_G.cag_groupRepaintIntervalSec = 0.2;
+_G.cag_groupLoadIntervalSec = 0.2;
+_G.cag_groupRepaintIntervalSec = 0.1;
 _G.cagGroupPoller.Update = function()
   local now = Turbine.Engine.GetGameTime();
   if (now - _G.cag_groupLastLoadAt >= _G.cag_groupLoadIntervalSec) then
@@ -203,9 +209,10 @@ end
 _G.cagLocalWriter = Turbine.UI.Control();
 _G.cagLocalWriter:SetWantsUpdates(true);
 _G.cag_localLastWriteAt = 0;
-_G.cag_localWriteIntervalSec = 0.5;
+_G.cag_localWriteIntervalSec = 0.25;
 _G.cag_localLastAmount = -1;
 _G.cag_localLastDuration = -1;
+_G.cag_localLastAttacks = -1;
 _G.cag_localPrevInCombat = false;
 
 local function cag_collectLocalStats()
@@ -217,16 +224,21 @@ local function cag_collectLocalStats()
   local mob = enc.orderedMobs and enc.orderedMobs[1];
   if (mob == nil or mob.players == nil) then return nil end
   local pdata = mob.players[player.name];
-  local amount = 0;
-  if (pdata ~= nil and pdata[1] ~= nil and pdata[1].dmgData ~= nil and type(pdata[1].dmgData.amount) == "number") then
-    amount = pdata[1].dmgData.amount;
+  local amount, attacks = 0, 0;
+  if (pdata ~= nil and pdata[1] ~= nil and pdata[1].dmgData ~= nil) then
+    if (type(pdata[1].dmgData.amount) == "number") then
+      amount = pdata[1].dmgData.amount;
+    end
+    if (type(pdata[1].dmgData.attacks) == "number") then
+      attacks = pdata[1].dmgData.attacks;
+    end
   end
   local duration = (type(mob.duration) == "number" and mob.duration) or 0;
   if (mob.alive and not mob.terminated and type(mob.gameStartTime) == "number") then
     duration = duration + (Turbine.Engine.GetGameTime() - mob.gameStartTime);
   end
   if (duration < 0) then duration = 0 end
-  return amount, duration;
+  return amount, duration, attacks;
 end
 
 _G.cagLocalWriter.Update = function()
@@ -235,20 +247,27 @@ _G.cagLocalWriter.Update = function()
   -- encounter (and any reset) propagates without waiting for the throttle.
   local inCombat = (combatData ~= nil and combatData.inCombat) and true or false;
   local justEnteredCombat = (inCombat and not _G.cag_localPrevInCombat);
+  local justExitedCombat = (not inCombat and _G.cag_localPrevInCombat);
   _G.cag_localPrevInCombat = inCombat;
-  if (not justEnteredCombat and now - _G.cag_localLastWriteAt < _G.cag_localWriteIntervalSec) then return end
+  local forceWrite = justEnteredCombat or justExitedCombat;
+  if (not forceWrite and now - _G.cag_localLastWriteAt < _G.cag_localWriteIntervalSec) then return end
   _G.cag_localLastWriteAt = now;
-  local amount, duration = cag_collectLocalStats();
+  local amount, duration, attacks = cag_collectLocalStats();
   if (amount == nil) then return end
   -- skip writes when nothing changed (durations tick continuously, so use rounded compare)
   local roundedDuration = math.floor(duration * 10) / 10;
-  if (not justEnteredCombat and amount == _G.cag_localLastAmount and roundedDuration == _G.cag_localLastDuration) then return end
+  if (not forceWrite
+      and amount == _G.cag_localLastAmount
+      and roundedDuration == _G.cag_localLastDuration
+      and attacks == _G.cag_localLastAttacks) then return end
   _G.cag_localLastAmount = amount;
   _G.cag_localLastDuration = roundedDuration;
+  _G.cag_localLastAttacks = attacks;
   pcall(Turbine.PluginData.Save, Turbine.DataScope.Account, "CALocalStats", {
     player = player.name,
     amount = amount,
     duration = roundedDuration,
+    attacks = attacks,
     inCombat = inCombat,
   });
 end

@@ -1,7 +1,7 @@
 {
   "name": "tumba-analysis",
   "productName": "TumbaAnalysis",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Real-time group combat parses for LOTRO",
   "private": true,
   "main": "out/main/index.js",

@@ -56,6 +56,7 @@ function parse(raw: unknown): ClientMessage | undefined {
           player: obj.player,
           amount: obj.amount,
           duration: obj.duration,
+          attacks: typeof obj.attacks === 'number' ? obj.attacks : 0,
           inCombat: typeof obj.inCombat === 'boolean' ? obj.inCombat : false,
         };
       }
@@ -98,6 +99,7 @@ wss.on('connection', (socket, req) => {
         msg.player,
         msg.amount,
         msg.duration,
+        msg.attacks,
         msg.inCombat,
       );
       if (!room) sendError(socket, 'join a room before sending stats');
@@ -106,8 +108,11 @@ wss.on('connection', (socket, req) => {
     }
   });
 
+  // Disconnect != leave. The socket is gone (network blip, app quit, crash)
+  // but we don't want to immediately yank the player's stats from peers'
+  // Group tabs. markOffline marks them dimmed and starts a 3-min TTL.
   socket.on('close', () => {
-    registry.leave(socket);
+    registry.markOffline(socket);
     log(`disconnect from=${remote}`);
   });
 

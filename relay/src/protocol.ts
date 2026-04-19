@@ -1,6 +1,13 @@
 export type ClientMessage =
   | { type: 'join'; room: string; player: string }
-  | { type: 'stats'; player: string; amount: number; duration: number; inCombat: boolean }
+  | {
+      type: 'stats';
+      player: string;
+      amount: number;
+      duration: number;
+      attacks: number;
+      inCombat: boolean;
+    }
   | { type: 'leave' };
 
 export type ServerMessage =
@@ -17,13 +24,16 @@ export type ServerMessage =
 export type PlayerSnapshot = {
   amount: number;
   duration: number;
+  attacks: number;
   updatedAt: number;
   inCombat: boolean;
+  online: boolean;
 };
 
 export type EncounterPlayer = {
   amount: number;
   duration: number;
+  attacks: number;
 };
 
 export type EncounterSummary = {
