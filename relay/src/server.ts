@@ -111,7 +111,7 @@ wss.on('connection', (socket, req) => {
       }
       const room = registry.join(socket, msg.room, msg.player);
       send(socket, { type: 'joined', room: room.name });
-      send(socket, registry.snapshot(room));
+      send(socket, registry.snapshotFor(room, msg.player));
       log(`join room=${msg.room} player=${msg.player} from=${remote}`);
     } else if (msg.type === 'stats') {
       const room = registry.recordStats(

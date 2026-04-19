@@ -32,12 +32,28 @@ export type Room = {
   pendingTimer: NodeJS.Timeout | undefined;
   // Per-player offline-eviction timers (3-min grace after disconnect).
   offlineTimers: Map<string, NodeJS.Timeout>;
+  // Per-player wall-clock of their most recent fresh join (NOT a reconnect
+  // within grace). Used to filter encounter visibility: a player who joins
+  // partway through a fight they didn't participate in shouldn't see it.
+  joinedAt: Map<string, number>;
+  // Wall-clock of the last time current-encounter damage actually grew for
+  // any player. Defense in depth: if the inCombat flag glitches and no
+  // damage is moving, force-close after DEAD_AIR_MS so a stuck encounter
+  // doesn't sit at 300+ minutes waiting on a flag that never flips.
+  lastDamageAt: number;
+  deadAirTimer: NodeJS.Timeout | undefined;
 };
 
 const PLAYER_TTL_MS = 5 * 60 * 1000;
 const OFFLINE_GRACE_MS = 3 * 60 * 1000;
 const BROADCAST_MIN_INTERVAL_MS = 100;
 const ENCOUNTER_IDLE_CLOSE_MS = 5_000;
+// If no player's amount grows for this long while the encounter is open,
+// force-close. Real fights have damage flowing at least every few seconds;
+// 60s of total silence means something went wrong (network, stuck flag,
+// AFK with combat flag pinned). Belt to ENCOUNTER_IDLE_CLOSE_MS's suspenders.
+const ENCOUNTER_DEAD_AIR_MS = 60_000;
+const ENCOUNTER_DEAD_AIR_POLL_MS = 10_000;
 const HISTORY_LIMIT = 30;
 
 export class RoomRegistry {
@@ -78,12 +94,24 @@ export class RoomRegistry {
         lastBroadcast: 0,
         pendingTimer: undefined,
         offlineTimers: new Map(),
+        joinedAt: new Map(),
+        lastDamageAt: 0,
+        deadAirTimer: undefined,
       };
       this.rooms.set(roomName, room);
     }
     const member: Member = { socket, player };
     room.members.add(member);
     this.membership.set(socket, { member, room });
+    // Stamp join time only if this is a *fresh* join — a reconnect within the
+    // offline grace window keeps the player's prior visibility into past
+    // encounters they participated in. A new join (no prior snapshot, or no
+    // pending offline timer) gets a fresh timestamp so they don't see history
+    // they weren't around for.
+    const isReconnect = room.offlineTimers.has(player) || room.players.has(player);
+    if (!isReconnect) {
+      room.joinedAt.set(player, Date.now());
+    }
     // Reconnect-while-stats-still-cached: clear any pending offline TTL and
     // mark online so other peers see them light up immediately.
     this.markOnline(room, player);
@@ -232,15 +260,46 @@ export class RoomRegistry {
   }
 
   snapshot(room: Room): ServerMessage {
+    return this.snapshotFor(room, undefined);
+  }
+
+  /**
+   * Build a snapshot tailored to one recipient. Encounters that started
+   * before the recipient joined the room (and which they didn't participate
+   * in) are stripped — prevents a fresh installer from inheriting hours of
+   * other players' parses just by joining a room with stuck history. When
+   * `recipient` is undefined (e.g. an admin or test caller), return the
+   * unfiltered view.
+   */
+  snapshotFor(room: Room, recipient: string | undefined): ServerMessage {
     this.pruneExpired(room);
     const players: Record<string, PlayerSnapshot> = {};
     for (const [name, data] of room.players) players[name] = data;
+
+    const visibleToRecipient = (enc: EncounterSummary): boolean => {
+      if (!recipient) return true;
+      const joinedAt = room.joinedAt.get(recipient);
+      if (joinedAt === undefined) return true;
+      if (enc.startedAt >= joinedAt) return true;
+      // Late join into an already-running encounter: only visible if the
+      // recipient actually contributed (their entry exists with damage > 0).
+      const own = enc.players[recipient];
+      return !!own && own.amount > 0;
+    };
+
+    const current = room.current && visibleToRecipient(room.current)
+      ? cloneEncounter(room.current)
+      : undefined;
+    const history = room.history
+      .filter(visibleToRecipient)
+      .map(cloneEncounter);
+
     return {
       type: 'snapshot',
       players,
       roomInCombat: this.isRoomInCombat(room),
-      current: room.current ? cloneEncounter(room.current) : undefined,
-      history: room.history.map(cloneEncounter),
+      current,
+      history,
     };
   }
 
@@ -267,6 +326,7 @@ export class RoomRegistry {
       endedAt: undefined,
       players: {},
     };
+    room.lastDamageAt = now;
     // Seed baselines from last-seen cumulative per player. Per-encounter
     // damage is (reported - baseline), clamped >= 0.
     room.baselines.clear();
@@ -278,6 +338,24 @@ export class RoomRegistry {
         lastReportedAmount: snap.amount,
       });
     }
+    // Start polling for dead air. We use a polling interval rather than a
+    // setTimeout-from-last-update because timeouts would need cancel/rearm
+    // on every stats message — adds up in a 6-person room at 2Hz heartbeats.
+    if (room.deadAirTimer) clearInterval(room.deadAirTimer);
+    room.deadAirTimer = setInterval(() => {
+      if (!room.current) {
+        if (room.deadAirTimer) clearInterval(room.deadAirTimer);
+        room.deadAirTimer = undefined;
+        return;
+      }
+      if (Date.now() - room.lastDamageAt > ENCOUNTER_DEAD_AIR_MS) {
+        console.log(
+          `[room ${room.name}] force-closing encounter ${room.current.id} ` +
+            `after ${Math.round((Date.now() - room.lastDamageAt) / 1000)}s of dead air`,
+        );
+        this.closeEncounter(room);
+      }
+    }, ENCOUNTER_DEAD_AIR_POLL_MS);
   }
 
   private updateEncounterPlayer(
@@ -315,8 +393,16 @@ export class RoomRegistry {
     const amount = Math.max(0, reportedAmount - baseline.amount);
     const duration = Math.max(0, reportedDuration - baseline.duration);
     const attacks = Math.max(0, reportedAttacks - baseline.attacks);
+    const prev = room.current.players[player];
     const entry: EncounterPlayer = { amount, duration, attacks };
+    // Preserve the per-mob/per-skill detail attached by recordEncounterDetail
+    // so a stats refresh doesn't blow away breakdown data.
+    if (prev?.mobs) entry.mobs = prev.mobs;
+    if (prev?.detailSeq !== undefined) entry.detailSeq = prev.detailSeq;
     room.current.players[player] = entry;
+    if (!prev || amount > prev.amount) {
+      room.lastDamageAt = Date.now();
+    }
   }
 
   private refreshIdleTimer(room: Room): void {
@@ -351,7 +437,14 @@ export class RoomRegistry {
     }
     room.current = undefined;
     room.baselines.clear();
-    room.idleCloseTimer = undefined;
+    if (room.idleCloseTimer) {
+      clearTimeout(room.idleCloseTimer);
+      room.idleCloseTimer = undefined;
+    }
+    if (room.deadAirTimer) {
+      clearInterval(room.deadAirTimer);
+      room.deadAirTimer = undefined;
+    }
     this.scheduleBroadcast(room);
   }
 
@@ -405,9 +498,11 @@ export class RoomRegistry {
     room.pendingTimer = setTimeout(() => {
       room.pendingTimer = undefined;
       room.lastBroadcast = Date.now();
-      const msg = JSON.stringify(this.snapshot(room));
+      // Per-recipient snapshots: each member gets the encounter set they're
+      // entitled to see (filters out fights that started before they joined).
       for (const m of room.members) {
-        if (m.socket.readyState === m.socket.OPEN) m.socket.send(msg);
+        if (m.socket.readyState !== m.socket.OPEN) continue;
+        m.socket.send(JSON.stringify(this.snapshotFor(room, m.player)));
       }
     }, wait);
   }
