@@ -175,7 +175,11 @@ _G.cag_BuildGroupData = function(raw)
 end
 
 function _G.groupTab:GetData() return _G.cag_groupData end
-function _G.groupTab:GetDataForPlayer(player,includeTotals,category) return _G.cag_groupData end
+-- Drill-down into a single player's skill breakdown is not supported on the
+-- Group tab (we'd need encounter-detail data from the relay). Returning nil
+-- tells the bars panel to stay at the overview level instead of showing the
+-- full group map a second time.
+function _G.groupTab:GetDataForPlayer(player,includeTotals,category) return nil end
 
 -- Duration must come from the same encounter as the totals, not from
 -- combatData[selectedMob], which is local to this client and changes when the
@@ -198,10 +202,9 @@ _G.cag_groupData = _G.cag_BuildGroupData({
 
 -- Poller: reads CAGroupData plugindata file (written by external companion app)
 -- and refreshes the Group tab. Two cadences:
---   (a) data load every cag_groupLoadIntervalSec — Turbine.PluginData.Load is
---       async and can be slow under load, so we DON'T gate the next load on
---       the previous callback firing (a stuck callback would otherwise freeze
---       all subsequent polls and the tab updates only every ~15s).
+--   (a) data load at an adaptive interval — faster during combat (250ms),
+--       slower when idle (1s). Gated on callback completion to prevent
+--       overlapping async disk reads from piling up.
 --   (b) tab repaint every cag_groupRepaintIntervalSec — drives the duration/
 --       DPS labels via combatData state so the timer ticks smoothly even
 --       when no fresh data arrived from the desktop app.
@@ -211,13 +214,18 @@ _G.cagGroupPoller = Turbine.UI.Control();
 _G.cagGroupPoller:SetWantsUpdates(true);
 _G.cag_groupLastLoadAt = 0;
 _G.cag_groupLastRepaintAt = 0;
-_G.cag_groupLoadIntervalSec = 0.2;
+_G.cag_groupLoadPending = false;  -- gate: prevent overlapping async loads
+_G.cag_groupLoadIntervalCombat = 0.25;   -- 4 loads/sec during combat
+_G.cag_groupLoadIntervalIdle = 1.0;      -- 1 load/sec when idle
 _G.cag_groupRepaintIntervalSec = 0.1;
 _G.cagGroupPoller.Update = function()
   local now = Turbine.Engine.GetGameTime();
-  if (now - _G.cag_groupLastLoadAt >= _G.cag_groupLoadIntervalSec) then
+  local interval = _G.cag_groupRoomInCombat and _G.cag_groupLoadIntervalCombat or _G.cag_groupLoadIntervalIdle;
+  if (not _G.cag_groupLoadPending and now - _G.cag_groupLastLoadAt >= interval) then
     _G.cag_groupLastLoadAt = now;
+    _G.cag_groupLoadPending = true;
     pcall(Turbine.PluginData.Load, Turbine.DataScope.Account, "CAGroupData", function(result)
+      _G.cag_groupLoadPending = false;
       if (type(result) == "table") then
         _G.cag_groupData = _G.cag_BuildGroupData(result);
       end
@@ -243,6 +251,20 @@ _G.cag_localLastAmount = -1;
 _G.cag_localLastDuration = -1;
 _G.cag_localLastAttacks = -1;
 _G.cag_localPrevInCombat = false;
+
+-- C1 fix: on plugin load, write a reset sentinel so the desktop app detects a
+-- fresh session and doesn't keep pushing stale cumulative amounts from a previous
+-- login. The desktop checks for the `reset` flag and re-anchors baselines.
+if (player ~= nil and player.name ~= nil) then
+  pcall(Turbine.PluginData.Save, Turbine.DataScope.Account, "CALocalStats", {
+    player = player.name,
+    amount = 0,
+    duration = 0,
+    attacks = 0,
+    inCombat = false,
+    reset = true,
+  });
+end
 
 local function cag_collectLocalStats()
   if (combatData == nil) then return nil end
@@ -275,7 +297,10 @@ end
 -- The companion watches this file and forwards snapshots to the relay so remote
 -- viewers can drill from encounter -> mob -> player -> skill. We only serialize
 -- rows with damage > 0 so empty placeholder mobs never hit the wire.
-_G.cag_encounterDetailSeq = 0;
+-- Use a timestamp-based seq so plugin reloads don't reset below the relay's
+-- last-seen value (an incrementing counter restarting at 1 would be rejected
+-- by the relay's idempotency check until it exceeded the old session's max).
+_G.cag_encounterDetailSeq = math.floor(Turbine.Engine.GetGameTime() * 1000);
 
 local function cag_buildEncounterDetail()
   if (combatData == nil or player == nil or player.name == nil) then return nil end

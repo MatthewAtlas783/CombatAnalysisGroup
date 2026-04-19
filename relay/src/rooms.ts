@@ -488,6 +488,7 @@ export class RoomRegistry {
     if (room.offlineTimers.size > 0) return; // still expecting reconnects
     if (room.pendingTimer) clearTimeout(room.pendingTimer);
     if (room.idleCloseTimer) clearTimeout(room.idleCloseTimer);
+    if (room.deadAirTimer) clearInterval(room.deadAirTimer);
     this.rooms.delete(room.name);
   }
 

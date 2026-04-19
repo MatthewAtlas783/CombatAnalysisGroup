@@ -49,6 +49,10 @@ const SEND_MIN_GAP_MS = 50;
 // Relay-side grace is 3min; this is a slightly shorter safety net so we don't
 // keep ghosts indefinitely if a player legitimately leaves.
 const PEER_CACHE_TTL_MS = 2 * 60 * 1000;
+// If local stats haven't been updated in this window, stop heartbeating —
+// LOTRO is probably closed or the plugin is unloaded. Prevents pumping stale
+// data to the relay and keeping a ghost player alive.
+const LOCAL_STALE_MS = 30_000;
 
 function defaultState(): AppState {
   return {
@@ -113,7 +117,13 @@ export class Service extends EventEmitter {
     this.stopWatch = undefined;
     if (this.stopDetailWatch) this.stopDetailWatch();
     this.stopDetailWatch = undefined;
-    if (this.relay) this.relay.close();
+    // Send explicit leave so the relay immediately evicts the player instead
+    // of waiting the 3-min offline grace. Prevents a race where a new socket
+    // connects before the old socket's close event fires.
+    if (this.relay) {
+      try { this.relay.send({ type: 'leave' }); } catch { /* swallow */ }
+      this.relay.close();
+    }
     this.relay = undefined;
     this.peerCache.clear();
     this.lastForwardedDetailSeq.clear();
@@ -189,6 +199,32 @@ export class Service extends EventEmitter {
       if (error) return;
       const snap = asLocalSnapshot(data, this.state.player || settings.playerOverride);
       if (!snap) return;
+      // Reset sentinel: plugin wrote {reset: true} on (re)load. Clear local
+      // state so we don't push stale cumulative amounts from a previous session.
+      const raw = data as Record<string, unknown>;
+      if (raw && typeof raw === 'object' && (raw as Record<string, unknown>).reset === true) {
+        this.lastForwardedDetailSeq.clear();
+        this.peerCache.clear();
+        this.patch({
+          player: snap.player,
+          local: {
+            amount: 0,
+            duration: 0,
+            attacks: 0,
+            inCombat: false,
+            updatedAt: Date.now(),
+          },
+          players: {},
+          currentEncounter: undefined,
+          history: [],
+          selectedEncounterId: undefined,
+        });
+        // Re-join the relay so baselines are re-anchored.
+        if (this.state.relayStatus === 'connected' && this.relay) {
+          this.relay.send({ type: 'join', room: settings.room, player: snap.player });
+        }
+        return;
+      }
       // Character swap: previously tracked player differs from the one the
       // plugin is now reporting. Evict old state and re-join the relay as
       // the new character so the old parse doesn't linger.
@@ -211,8 +247,11 @@ export class Service extends EventEmitter {
           joined: false,
         });
         if (this.state.relayStatus === 'connected' && this.relay) {
+          this.relay.send({ type: 'leave' });
           this.relay.send({ type: 'join', room: settings.room, player: snap.player });
         }
+        // C2 fix: push fresh stats immediately after re-join instead of early-return
+        this.pushLocalStats();
         return;
       }
       this.patch({
@@ -285,6 +324,10 @@ export class Service extends EventEmitter {
     const player = this.state.player;
     if (!local || !player) return;
     const now = Date.now();
+    // H4 fix: if local stats haven't been updated recently, LOTRO is probably
+    // not running. Stop pumping stale data so the relay's offline grace can
+    // fire and the player naturally drops out.
+    if (now - local.updatedAt > LOCAL_STALE_MS) return;
     if (now - this.lastSentAt < SEND_MIN_GAP_MS) return;
     this.lastSentAt = now;
     this.relay.send({
@@ -412,16 +455,39 @@ function buildPluginPayload(
       playersOut[name] = p.amount;
     }
   } else {
+    // L6 fix: skip offline cached peers — they'd appear as active bars
+    // on the Group tab with stale damage numbers.
     for (const [name, p] of Object.entries(mergedPlayers)) {
-      playersOut[name] = p.amount;
+      if (p.online) playersOut[name] = p.amount;
     }
+  }
+  // M1/M2 fix: the encounter duration should be the max of individual player
+  // durations, not wall-clock since startedAt. Wall-clock can be significantly
+  // longer than actual fight time (e.g. if the encounter opened when the first
+  // player entered combat but others joined seconds later). Using wall-clock
+  // deflates DPS across the board.
+  const now = Date.now();
+  let currentOut: (EncounterSummary & { duration: number }) | null = null;
+  if (msg.current) {
+    let maxDur = 0;
+    for (const p of Object.values(msg.current.players)) {
+      if (p.duration > maxDur) maxDur = p.duration;
+    }
+    // Fall back to wall-clock if no player duration available yet
+    if (maxDur <= 0) {
+      maxDur = Math.max(0, (now - msg.current.startedAt) / 1000);
+    }
+    currentOut = {
+      ...msg.current,
+      duration: maxDur,
+    };
   }
   return {
     players: playersOut,
     playersFull: mergedPlayers,
     roomInCombat: msg.roomInCombat,
-    current: msg.current ?? null,
+    current: currentOut,
     history: msg.history,
-    updatedAt: Date.now(),
+    updatedAt: now,
   };
 }

@@ -25,8 +25,14 @@ export function watchPluginData(
     awaitWriteFinish: { stabilityThreshold: 150, pollInterval: 50 },
     ignoreInitial: false,
   });
+  let lastMtime = 0;
   const handler = () => {
     try {
+      // Track mtime so the fallback poll can skip if nothing changed.
+      try {
+        const stat = fs.statSync(filePath);
+        lastMtime = stat.mtimeMs;
+      } catch { /* file may not exist yet */ }
       const data = readPluginData(filePath);
       onChange(data);
     } catch (err) {
@@ -36,5 +42,22 @@ export function watchPluginData(
   watcher.on('add', handler);
   watcher.on('change', handler);
   watcher.on('unlink', () => onChange(undefined));
-  return () => { void watcher.close(); };
+  // H2 fix: fallback poll — if chokidar's awaitWriteFinish swallows rapid
+  // writes (e.g. during active combat at 250ms intervals), this catches
+  // what was missed. Only fires the callback if the file actually changed.
+  const fallback = setInterval(() => {
+    try {
+      if (!fs.existsSync(filePath)) return;
+      const stat = fs.statSync(filePath);
+      if (stat.mtimeMs > lastMtime) {
+        lastMtime = stat.mtimeMs;
+        const data = readPluginData(filePath);
+        onChange(data);
+      }
+    } catch { /* swallow — next poll will retry */ }
+  }, 500);
+  return () => {
+    clearInterval(fallback);
+    void watcher.close();
+  };
 }
