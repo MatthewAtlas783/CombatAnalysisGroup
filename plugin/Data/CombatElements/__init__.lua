@@ -1,0 +1,22 @@
+import "CombatAnalysisGroup.Data.CombatElements.CombatElement"
+
+import "CombatAnalysisGroup.Data.CombatElements.TargetedCombatElement"
+import "CombatAnalysisGroup.Data.CombatElements.Corruption"
+import "CombatAnalysisGroup.Data.CombatElements.Interrupt"
+import "CombatAnalysisGroup.Data.CombatElements.SkillCombatElement"
+import "CombatAnalysisGroup.Data.CombatElements.Buff"
+import "CombatAnalysisGroup.Data.CombatElements.Debuff"
+import "CombatAnalysisGroup.Data.CombatElements.StandardCombatElement"
+import "CombatAnalysisGroup.Data.CombatElements.DmgCombatElement"
+import "CombatAnalysisGroup.Data.CombatElements.Dmg"
+import "CombatAnalysisGroup.Data.CombatElements.Taken"
+import "CombatAnalysisGroup.Data.CombatElements.RestoreCombatElement"
+import "CombatAnalysisGroup.Data.CombatElements.Heal"
+import "CombatAnalysisGroup.Data.CombatElements.Power"
+
+import "CombatAnalysisGroup.Data.CombatElements.CombatStateElement"
+import "CombatAnalysisGroup.Data.CombatElements.CombatEntry"
+import "CombatAnalysisGroup.Data.CombatElements.CombatExit"
+
+import "CombatAnalysisGroup.Data.CombatElements.Death"
+import "CombatAnalysisGroup.Data.CombatElements.Revive"

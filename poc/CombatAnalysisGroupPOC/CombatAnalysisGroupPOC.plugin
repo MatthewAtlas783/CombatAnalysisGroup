@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<Plugin>
+	<Information>
+		<Name>CombatAnalysisGroupPOC</Name>
+		<Author>Matt</Author>
+		<Version>0.0.1</Version>
+		<Description>POC: verifies external file write -> plugin read path for CombatAnalysisGroup. Reads plugindata on a timer and echoes to chat.</Description>
+	</Information>
+	<Package>CombatAnalysisGroupPOC.Main</Package>
+</Plugin>
