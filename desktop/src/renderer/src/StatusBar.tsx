@@ -16,9 +16,10 @@ function fmtNumber(n: number): string {
 
 function fmtRelative(ts: number, now: number): string {
   const diff = Math.max(0, Math.round((now - ts) / 1000));
-  if (diff < 60) return diff + 's';
+  if (diff < 5) return 'just now';
+  if (diff < 60) return diff + 's ago';
   const m = Math.floor(diff / 60);
-  return m + 'm' + (diff % 60) + 's';
+  return m + 'm' + (diff % 60).toString().padStart(2, '0') + 's ago';
 }
 
 export function StatusBar({ state, now }: { state: AppState; now: number }) {
@@ -27,60 +28,71 @@ export function StatusBar({ state, now }: { state: AppState; now: number }) {
     ? Math.max(0, Math.round((state.reconnectAt - now) / 1000))
     : undefined;
 
+  const showError = state.relayDetail && status !== 'connected';
+
   return (
     <section className="status-bar">
-      <div className="status-row">
-        <span className="status-label">relay</span>
-        <span className={`status-dot status-${status}`} />
-        <span className="status-value">{STATUS_LABEL[status] ?? status}</span>
-        {status === 'reconnecting' && reconnectIn !== undefined && (
-          <span className="status-hint">retry in {reconnectIn}s</span>
-        )}
-        {state.relayDetail && status !== 'connected' && (
-          <span className="status-error">{state.relayDetail}</span>
-        )}
-      </div>
+      <div className="status-line">
+        <span className="status-chunk">
+          <span className={`status-dot status-${status}`} />
+          <span className="status-value">{STATUS_LABEL[status] ?? status}</span>
+          {status === 'reconnecting' && reconnectIn !== undefined && (
+            <span className="status-hint">· retry {reconnectIn}s</span>
+          )}
+        </span>
 
-      <div className="status-row">
-        <span className="status-label">room</span>
-        <span className="status-value">{state.room || '—'}</span>
-        {state.room && (
-          <span className="status-hint">{state.joined ? 'joined' : 'pending'}</span>
-        )}
+        <span className="status-sep" aria-hidden>·</span>
+
+        <span className="status-chunk">
+          <span className="status-dim">room</span>
+          <span className="status-value">{state.room || '—'}</span>
+          {state.room && !state.joined && (
+            <span className="status-hint">(pending)</span>
+          )}
+        </span>
+
         {state.joined && (
-          <span
-            className={`combat-pill ${state.roomInCombat ? 'combat-pill-active' : 'combat-pill-idle'}`}
-          >
-            {state.roomInCombat ? 'in combat' : 'idle'}
-          </span>
+          <>
+            <span className="status-sep" aria-hidden>·</span>
+            <span
+              className={`combat-pill ${state.roomInCombat ? 'combat-pill-active' : 'combat-pill-idle'}`}
+            >
+              {state.roomInCombat ? 'in combat' : 'idle'}
+            </span>
+          </>
         )}
       </div>
 
-      <div className="status-row">
-        <span className="status-label">you</span>
+      <div className="status-line status-line-sub">
         {state.player ? (
           <>
-            <span className="status-value">{state.player}</span>
-            {state.local ? (
-              <span className="status-hint">
-                {fmtNumber(state.local.amount)} dmg · last update{' '}
-                {fmtRelative(state.local.updatedAt, now)} ago
-              </span>
-            ) : (
+            <span className="status-chunk">
+              <span className="status-dim">you</span>
+              <span className="status-value">{state.player}</span>
+            </span>
+            {state.local && (
+              <>
+                <span className="status-sep" aria-hidden>·</span>
+                <span className="status-chunk">
+                  <span className="status-value">{fmtNumber(state.local.amount)} dmg</span>
+                  <span className="status-hint">{fmtRelative(state.local.updatedAt, now)}</span>
+                </span>
+              </>
+            )}
+            {!state.local && (
               <span className="status-hint">waiting for plugin to publish stats</span>
             )}
           </>
         ) : (
           <span className="status-hint">
-            character unknown — load TumbaAnalysis in-game and step into combat once
+            no character yet — load TumbaAnalysis in-game and step into combat once
           </span>
         )}
       </div>
 
-      {state.account && (
-        <div className="status-row">
-          <span className="status-label">account</span>
-          <span className="status-value">{state.account}</span>
+      {showError && (
+        <div className="status-line">
+          <span className="status-error">{state.relayDetail}</span>
         </div>
       )}
     </section>

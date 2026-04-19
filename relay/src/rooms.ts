@@ -68,6 +68,14 @@ export class RoomRegistry {
     if (!entry) return;
     entry.room.members.delete(entry.member);
     this.membership.delete(socket);
+    // Evict the player's snapshot & baseline too — otherwise when a user
+    // swaps characters (socket rejoins under a new name) the old character's
+    // cumulative damage lingers in room.players until the 5-minute TTL.
+    entry.room.players.delete(entry.member.player);
+    entry.room.baselines.delete(entry.member.player);
+    if (entry.room.current) {
+      delete entry.room.current.players[entry.member.player];
+    }
     if (entry.room.members.size === 0) {
       if (entry.room.pendingTimer) clearTimeout(entry.room.pendingTimer);
       if (entry.room.idleCloseTimer) clearTimeout(entry.room.idleCloseTimer);

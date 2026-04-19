@@ -157,6 +157,30 @@ export class Service extends EventEmitter {
       if (error) return;
       const snap = asLocalSnapshot(data, this.state.player || settings.playerOverride);
       if (!snap) return;
+      // Character swap: previously tracked player differs from the one the
+      // plugin is now reporting. Evict old state and re-join the relay as
+      // the new character so the old parse doesn't linger.
+      const prev = this.state.player;
+      if (prev && prev !== snap.player) {
+        this.patch({
+          player: snap.player,
+          local: {
+            amount: snap.amount,
+            duration: snap.duration,
+            inCombat: snap.inCombat,
+            updatedAt: Date.now(),
+          },
+          players: {},
+          currentEncounter: undefined,
+          history: [],
+          selectedEncounterId: undefined,
+          joined: false,
+        });
+        if (this.state.relayStatus === 'connected' && this.relay) {
+          this.relay.send({ type: 'join', room: settings.room, player: snap.player });
+        }
+        return;
+      }
       this.patch({
         player: snap.player,
         local: {
