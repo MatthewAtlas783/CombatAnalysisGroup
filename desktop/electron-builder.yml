@@ -22,3 +22,7 @@ nsis:
   createDesktopShortcut: true
   createStartMenuShortcut: true
   shortcutName: TumbaAnalysis
+publish:
+  - provider: github
+    owner: MatthewAtlas783
+    repo: CombatAnalysisGroup

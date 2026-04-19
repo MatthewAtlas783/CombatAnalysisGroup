@@ -4,6 +4,7 @@ import path from 'node:path';
 import { Service } from './service.js';
 import { registerIpc } from './ipc.js';
 import { getSettings } from './settings.js';
+import { initAutoUpdater, checkForUpdatesManual } from './updater.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -84,7 +85,9 @@ function createTray(): void {
   const menu = Menu.buildFromTemplate([
     { label: 'Show window', click: () => createWindow() },
     { label: 'Reconnect relay', click: () => service.reconnect() },
+    { label: 'Check for updates…', click: () => { void checkForUpdatesManual(); } },
     { type: 'separator' },
+    { label: `v${app.getVersion()}`, enabled: false },
     {
       label: 'Quit',
       click: () => {
@@ -108,6 +111,7 @@ if (!gotLock) {
     service.start();
     createTray();
     createWindow();
+    initAutoUpdater();
 
     app.on('activate', () => {
       if (BrowserWindow.getAllWindows().length === 0) createWindow();
