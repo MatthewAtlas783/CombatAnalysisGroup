@@ -489,9 +489,9 @@ L["WastedTempHeals"] = "  (wasted)";
 
 -- Note the following elements are indexed by: {Short Name, Full Name, Per Second Abbreviation, Tab Title, Tab Tooltip}
 
-L["Dmg"] = {"Dmg","Damage","DPS","Damage Tab","Outgoing Damage Tab"}
-L["Taken"] = {"Taken","Taken","TPS","Taken Tab","Incoming (Taken) Damage Tab"}
-L["Heal"] = {"Heal","Heal","HPS","Heal Tab","Incoming & Outgoing Healing Tab"}
+L["Dmg"] = {"DPS","Damage","DPS","Damage Tab","Outgoing Damage Tab"}
+L["Taken"] = {"TPS","Taken","TPS","Taken Tab","Incoming (Taken) Damage Tab"}
+L["Heal"] = {"HPS","Heal","HPS","Heal Tab","Incoming & Outgoing Healing Tab"}
 L["Power"] = {"Power","Power","PPS","Power Tab","Incoming & Outgoing Power Restoration Tab"}
 
 L["Debuff"] = {"Debuff","Debuff","Debuff","Debuff Tab","Debuff Durations Tab"}

@@ -206,41 +206,23 @@ function pickView(state: AppState, now: number): ViewModel {
       emptySub: 'waiting for first damage numbers to arrive.',
     };
   }
-  // Idle — show latest history entry if any
-  const latest = state.history[0];
-  if (latest) {
-    const dur = encounterDurationSec(latest, now);
-    const total = encounterTotal(latest);
-    return {
-      rows: Object.entries(latest.players).map(([name, p]) => ({
-        name,
-        amount: p.amount,
-        duration: p.duration || dur,
-        updatedAt: latest.endedAt ?? latest.startedAt,
-        online: state.players[name]?.online ?? true,
-        mobs: p.mobs,
-      })),
-      title: `Last encounter · #${latest.id}`,
-      subtitle: `${fmtClock(latest.startedAt)}${latest.endedAt ? ` → ${fmtClock(latest.endedAt)}` : ''} · idle`,
-      totalAmount: total,
-      totalDuration: dur,
-      showAge: false,
-      isEmpty: total === 0,
-      emptyTitle: 'no combat yet',
-      emptySub: 'step into a fight in-game and the group will populate here.',
-    };
-  }
-  // Nothing yet
+  // Idle on the Live tab — explicitly zero the view so the user can tell at a
+  // glance that nothing is tracking. Previously we'd fall back to the latest
+  // history entry here, which made stale numbers look like a live parse.
+  // Past fights are still reachable via the numbered pills.
+  const hasHistory = state.history.length > 0;
   return {
     rows: [],
-    title: 'No encounters yet',
-    subtitle: undefined,
+    title: 'Live encounter',
+    subtitle: hasHistory ? 'idle · waiting for next fight' : undefined,
     totalAmount: 0,
     totalDuration: 0,
     showAge: false,
     isEmpty: true,
-    emptyTitle: 'No parses yet',
-    emptySub: 'Once you (or anyone in your room) deals damage, an encounter will appear here.',
+    emptyTitle: hasHistory ? 'idle' : 'No parses yet',
+    emptySub: hasHistory
+      ? 'waiting for next encounter — pick a numbered pill to review past fights.'
+      : 'Once you (or anyone in your room) deals damage, an encounter will appear here.',
   };
 }
 

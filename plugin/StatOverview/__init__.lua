@@ -155,20 +155,23 @@ _G.cag_BuildGroupData = function(raw)
   _G.cag_groupRoomInCombat = (raw.roomInCombat == true)
   _G.cag_groupCurrent = (type(raw.current) == "table") and raw.current or nil
   _G.cag_groupHistory = (type(raw.history) == "table") and raw.history or {}
-  -- Default display: live current encounter when in combat, otherwise most
-  -- recent closed encounter. Falls back to the legacy `players` map if the
-  -- desktop hasn't yet sent encounter-shaped data.
-  local active;
+  -- Show the current encounter while one is live; when the room is idle, show
+  -- nothing (zeros) rather than leaving the last fight's numbers on-screen —
+  -- users read a populated tab as "actively tracking". Only fall back to the
+  -- legacy `players` map on cold-start so the placeholder row still renders
+  -- before the desktop ever writes an encounter-shaped payload.
+  local active = nil
+  local source = nil
   if (_G.cag_groupCurrent ~= nil and type(_G.cag_groupCurrent.players) == "table") then
     active = _G.cag_groupCurrent
-  elseif (_G.cag_groupHistory[1] ~= nil and type(_G.cag_groupHistory[1].players) == "table") then
-    active = _G.cag_groupHistory[1]
-  else
-    active = nil
+    source = active.players
+  elseif (#_G.cag_groupHistory == 0 and _G.cag_groupCurrent == nil) then
+    -- No encounter has ever been recorded — keep legacy players as a seed so
+    -- the "Waiting for desktop app" placeholder keeps rendering.
+    source = raw.players
   end
   _G.cag_groupActiveEncounter = active
-  local source = (active ~= nil and active.players) or raw.players
-  return cag_buildPlayersMap(source)
+  return cag_buildPlayersMap(source or {})
 end
 
 function _G.groupTab:GetData() return _G.cag_groupData end
@@ -176,15 +179,14 @@ function _G.groupTab:GetDataForPlayer(player,includeTotals,category) return _G.c
 
 -- Duration must come from the same encounter as the totals, not from
 -- combatData[selectedMob], which is local to this client and changes when the
--- user picks a different mob/encounter in the dropdowns. Falling back to the
--- default behavior on cold-start (before any desktop data arrives) keeps the
--- "Waiting for desktop app" placeholder rendering sanely.
+-- user picks a different mob/encounter in the dropdowns. When idle (no active
+-- encounter) we return 0 so the DPS/duration displays zero out with the data.
 function _G.groupTab:Duration()
   local active = _G.cag_groupActiveEncounter
   if (active ~= nil and type(active.duration) == "number") then
     return active.duration
   end
-  return combatData[self.panel.selectedTarget]:Duration(Turbine.Engine.GetGameTime())
+  return 0
 end
 
 -- Seed with placeholder rows so the tab is visibly populated before any desktop-app data arrives.
@@ -346,6 +348,8 @@ local function cag_buildEncounterDetail()
   }
 end
 
+_G.cag_localLastInCombat = nil;
+
 _G.cagLocalWriter.Update = function()
   local now = Turbine.Engine.GetGameTime();
   -- Detect combat-start transition: force an immediate write so the new
@@ -358,16 +362,35 @@ _G.cagLocalWriter.Update = function()
   if (not forceWrite and now - _G.cag_localLastWriteAt < _G.cag_localWriteIntervalSec) then return end
   _G.cag_localLastWriteAt = now;
   local amount, duration, attacks = cag_collectLocalStats();
-  if (amount == nil) then return end
+  -- If stats aren't available yet (e.g. no encounter tracked) but we're at a
+  -- combat-transition boundary, still emit an inCombat-only update so the
+  -- companion learns we've left combat. Otherwise the relay can't close the
+  -- room encounter and the desktop pins at "IN COMBAT" indefinitely.
+  if (amount == nil) then
+    if (forceWrite and _G.cag_localLastInCombat ~= inCombat and player ~= nil and player.name ~= nil) then
+      _G.cag_localLastInCombat = inCombat;
+      pcall(Turbine.PluginData.Save, Turbine.DataScope.Account, "CALocalStats", {
+        player = player.name,
+        amount = _G.cag_localLastAmount >= 0 and _G.cag_localLastAmount or 0,
+        duration = _G.cag_localLastDuration >= 0 and _G.cag_localLastDuration or 0,
+        attacks = _G.cag_localLastAttacks >= 0 and _G.cag_localLastAttacks or 0,
+        inCombat = inCombat,
+      });
+    end
+    return
+  end
   -- skip writes when nothing changed (durations tick continuously, so use rounded compare)
   local roundedDuration = math.floor(duration * 10) / 10;
+  local inCombatChanged = (_G.cag_localLastInCombat ~= inCombat);
   if (not forceWrite
+      and not inCombatChanged
       and amount == _G.cag_localLastAmount
       and roundedDuration == _G.cag_localLastDuration
       and attacks == _G.cag_localLastAttacks) then return end
   _G.cag_localLastAmount = amount;
   _G.cag_localLastDuration = roundedDuration;
   _G.cag_localLastAttacks = attacks;
+  _G.cag_localLastInCombat = inCombat;
   pcall(Turbine.PluginData.Save, Turbine.DataScope.Account, "CALocalStats", {
     player = player.name,
     amount = amount,
