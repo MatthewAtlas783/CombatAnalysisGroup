@@ -602,6 +602,167 @@ input:focus {
   border-top: 1px solid var(--border);
 }
 
+/* Per-player breakdown (Phase 2) */
+
+.roster-row-wrap {
+  display: flex;
+  flex-direction: column;
+}
+
+.roster-row.expandable {
+  cursor: pointer;
+}
+
+.roster-row.expanded {
+  background: var(--bg-elev-2);
+}
+
+.drill-caret {
+  display: inline-block;
+  width: 12px;
+  color: var(--text-dim);
+  margin-right: 4px;
+  font-size: 10px;
+}
+
+.breakdown {
+  margin: 4px 0 10px 24px;
+  padding: 10px 12px;
+  background: var(--bg-elev);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+}
+
+.breakdown-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-bottom: 8px;
+}
+
+.breakdown-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  color: var(--text-dim);
+  cursor: pointer;
+  font-size: 11px;
+}
+
+.breakdown-tab:hover {
+  background: var(--bg-hover);
+  color: var(--text);
+}
+
+.breakdown-tab.active {
+  background: var(--accent-soft);
+  border-color: var(--accent-dim);
+  color: var(--text);
+}
+
+.bt-name {
+  max-width: 180px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.bt-total {
+  color: var(--text-faint);
+  font-variant-numeric: tabular-nums;
+}
+
+.breakdown-tab.active .bt-total {
+  color: var(--accent);
+}
+
+.breakdown-mob-meta {
+  display: flex;
+  gap: 6px;
+  color: var(--text-dim);
+  font-size: 11px;
+  margin-bottom: 6px;
+}
+
+.breakdown-empty {
+  color: var(--text-faint);
+  font-size: 11px;
+  padding: 8px 0;
+}
+
+.skill-table {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.skill-row {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 4px 8px;
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+}
+
+.skill-row.skill-head {
+  color: var(--text-faint);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding-bottom: 2px;
+}
+
+.skill-bar {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  background: var(--accent-soft);
+  border-left: 2px solid var(--accent-dim);
+  z-index: 0;
+}
+
+.sc {
+  position: relative;
+  z-index: 1;
+}
+
+.sc-name {
+  flex: 1;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sc-amount {
+  width: 70px;
+  text-align: right;
+}
+
+.sc-attacks {
+  width: 50px;
+  text-align: right;
+  color: var(--text-dim);
+}
+
+.sc-max {
+  width: 70px;
+  text-align: right;
+  color: var(--text-dim);
+}
+
+.sc-crit {
+  width: 50px;
+  text-align: right;
+  color: var(--text-dim);
+}
+
 /* Scrollbar */
 
 ::-webkit-scrollbar {

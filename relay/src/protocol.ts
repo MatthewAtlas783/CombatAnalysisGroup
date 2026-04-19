@@ -8,7 +8,33 @@ export type ClientMessage =
       attacks: number;
       inCombat: boolean;
     }
+  | {
+      type: 'encounterDetail';
+      player: string;
+      seq: number;
+      duration: number;
+      total: number;
+      attacks: number;
+      mobs: MobBreakdown[];
+    }
   | { type: 'leave' };
+
+export type SkillBreakdown = {
+  amount: number;
+  attacks: number;
+  max: number;
+  min: number;
+  crits: number;
+  devs: number;
+};
+
+export type MobBreakdown = {
+  name: string;
+  duration: number;
+  total: number;
+  attacks: number;
+  skills: Record<string, SkillBreakdown>;
+};
 
 export type ServerMessage =
   | { type: 'joined'; room: string }
@@ -34,6 +60,8 @@ export type EncounterPlayer = {
   amount: number;
   duration: number;
   attacks: number;
+  mobs?: MobBreakdown[];
+  detailSeq?: number;
 };
 
 export type EncounterSummary = {

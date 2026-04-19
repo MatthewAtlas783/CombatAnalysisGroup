@@ -2,6 +2,7 @@ import type { WebSocket } from 'ws';
 import type {
   EncounterPlayer,
   EncounterSummary,
+  MobBreakdown,
   PlayerSnapshot,
   ServerMessage,
 } from './protocol.js';
@@ -139,6 +140,10 @@ export class RoomRegistry {
       }
     }, OFFLINE_GRACE_MS);
     room.offlineTimers.set(player, timer);
+    // Player who just went offline may have been the last one still in combat.
+    // Re-evaluate the idle close timer so the room encounter closes cleanly
+    // instead of waiting the full 3-min offline grace.
+    this.refreshIdleTimer(room);
     this.scheduleBroadcast(room);
   }
 
@@ -185,6 +190,47 @@ export class RoomRegistry {
     return room;
   }
 
+  /**
+   * Merge a per-mob/per-skill breakdown from one player into the encounter the
+   * plugin just finished. Matching order:
+   *   1. Room's current encounter if this player has an entry in it
+   *      (e.g. others are still fighting so the encounter hasn't idle-closed)
+   *   2. Most-recent history entry containing this player
+   * `seq` is a plugin-local monotonic counter; we store it on the entry so a
+   * re-delivered snapshot doesn't overwrite a newer one from the same player.
+   */
+  recordEncounterDetail(
+    socket: WebSocket,
+    player: string,
+    seq: number,
+    mobs: MobBreakdown[],
+  ): Room | undefined {
+    const entry = this.membership.get(socket);
+    if (!entry) return undefined;
+    const room = entry.room;
+
+    let target: EncounterPlayer | undefined;
+    if (room.current && room.current.players[player]) {
+      target = room.current.players[player];
+    } else {
+      for (const enc of room.history) {
+        if (enc.players[player]) {
+          target = enc.players[player];
+          break;
+        }
+      }
+    }
+    if (!target) return room;
+    // Idempotency: ignore stale snapshots if a newer one already landed.
+    if (typeof target.detailSeq === 'number' && target.detailSeq >= seq) return room;
+
+    target.mobs = mobs;
+    target.detailSeq = seq;
+
+    this.scheduleBroadcast(room);
+    return room;
+  }
+
   snapshot(room: Room): ServerMessage {
     this.pruneExpired(room);
     const players: Record<string, PlayerSnapshot> = {};
@@ -207,7 +253,10 @@ export class RoomRegistry {
 
   private isRoomInCombat(room: Room): boolean {
     if (!room.current) return false;
-    for (const p of room.players.values()) if (p.inCombat) return true;
+    // Only count *online* fighters — an offline socket can't tell us they left
+    // combat, so stale inCombat=true would pin the room open for their full
+    // 3-min TTL and keep the current-encounter accumulating across real fights.
+    for (const p of room.players.values()) if (p.online && p.inCombat) return true;
     return false;
   }
 
@@ -272,9 +321,21 @@ export class RoomRegistry {
 
   private refreshIdleTimer(room: Room): void {
     if (!room.current) return;
-    if (room.idleCloseTimer) clearTimeout(room.idleCloseTimer);
     const inCombat = this.isRoomInCombat(room);
-    if (inCombat) return; // stay open while anyone is fighting
+    if (inCombat) {
+      // Someone re-entered combat — cancel any pending close.
+      if (room.idleCloseTimer) {
+        clearTimeout(room.idleCloseTimer);
+        room.idleCloseTimer = undefined;
+      }
+      return;
+    }
+    // Everyone OOC. Arm the close timer ONCE. Do NOT reset it on every
+    // subsequent OOC heartbeat — desktop heartbeats every 2s even when idle,
+    // so clear+reset would mean the 5s timer never fires and encounters
+    // accumulate forever (we saw this produce 30+ minute "Live encounters"
+    // with DPS collapsed across multiple real fights).
+    if (room.idleCloseTimer) return;
     room.idleCloseTimer = setTimeout(
       () => this.closeEncounter(room),
       ENCOUNTER_IDLE_CLOSE_MS,
@@ -355,7 +416,14 @@ export class RoomRegistry {
 function cloneEncounter(enc: EncounterSummary): EncounterSummary {
   const players: Record<string, EncounterPlayer> = {};
   for (const [name, p] of Object.entries(enc.players)) {
-    players[name] = { amount: p.amount, duration: p.duration, attacks: p.attacks };
+    const cloned: EncounterPlayer = {
+      amount: p.amount,
+      duration: p.duration,
+      attacks: p.attacks,
+    };
+    if (p.mobs) cloned.mobs = p.mobs;
+    if (typeof p.detailSeq === 'number') cloned.detailSeq = p.detailSeq;
+    players[name] = cloned;
   }
   return {
     id: enc.id,

@@ -61,6 +61,26 @@ function parse(raw: unknown): ClientMessage | undefined {
         };
       }
       return undefined;
+    case 'encounterDetail':
+      if (
+        typeof obj.player === 'string' &&
+        typeof obj.seq === 'number' &&
+        Array.isArray(obj.mobs)
+      ) {
+        return {
+          type: 'encounterDetail',
+          player: obj.player,
+          seq: obj.seq,
+          duration: typeof obj.duration === 'number' ? obj.duration : 0,
+          total: typeof obj.total === 'number' ? obj.total : 0,
+          attacks: typeof obj.attacks === 'number' ? obj.attacks : 0,
+          // Trust-but-normalize: we rely on mobs being correctly shaped here
+          // (plugin is the only writer). Malformed entries get dropped by
+          // renderer-side checks rather than hand-validated per field.
+          mobs: obj.mobs as never,
+        };
+      }
+      return undefined;
     case 'leave':
       return { type: 'leave' };
     default:
@@ -103,6 +123,14 @@ wss.on('connection', (socket, req) => {
         msg.inCombat,
       );
       if (!room) sendError(socket, 'join a room before sending stats');
+    } else if (msg.type === 'encounterDetail') {
+      const room = registry.recordEncounterDetail(
+        socket,
+        msg.player,
+        msg.seq,
+        msg.mobs,
+      );
+      if (!room) sendError(socket, 'join a room before sending encounter detail');
     } else if (msg.type === 'leave') {
       registry.leave(socket);
     }

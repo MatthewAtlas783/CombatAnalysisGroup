@@ -3,7 +3,7 @@
 	<Information>
 		<Name>TumbaAnalysis</Name>
 		<Author>Gerard Cerchio, adra, argonui, hdflux, Ravdor, Dromo and James Bebbington</Author>
-		<Version>1.0.0</Version>
+		<Version>1.0.3</Version>
 		<Description>Combat Analysis parses the combat log and displays a range of useful combat information, in real time, regarding:
 
 - Damage Dealt &amp; Taken

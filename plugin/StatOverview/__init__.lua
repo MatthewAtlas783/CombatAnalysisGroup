@@ -135,6 +135,13 @@ local function cag_buildPlayersMap(playersTbl)
   return out
 end
 
+-- The encounter currently driving both the data AND the duration of the Group
+-- tab. Kept as a single source so totals and duration can never disagree (prior
+-- bug: totals came from room state, duration came from combatData's selectedMob
+-- which tracks the dropdown — switching the dropdown made DPS move while the
+-- totals stayed pinned).
+_G.cag_groupActiveEncounter = nil
+
 _G.cag_BuildGroupData = function(raw)
   -- Preserves backward-compat with old desktop builds that only emit `players`.
   -- New shape additionally carries roomInCombat + current + history.
@@ -142,6 +149,7 @@ _G.cag_BuildGroupData = function(raw)
     _G.cag_groupRoomInCombat = false
     _G.cag_groupCurrent = nil
     _G.cag_groupHistory = {}
+    _G.cag_groupActiveEncounter = nil
     return {}
   end
   _G.cag_groupRoomInCombat = (raw.roomInCombat == true)
@@ -150,22 +158,41 @@ _G.cag_BuildGroupData = function(raw)
   -- Default display: live current encounter when in combat, otherwise most
   -- recent closed encounter. Falls back to the legacy `players` map if the
   -- desktop hasn't yet sent encounter-shaped data.
-  local source;
+  local active;
   if (_G.cag_groupCurrent ~= nil and type(_G.cag_groupCurrent.players) == "table") then
-    source = _G.cag_groupCurrent.players
+    active = _G.cag_groupCurrent
   elseif (_G.cag_groupHistory[1] ~= nil and type(_G.cag_groupHistory[1].players) == "table") then
-    source = _G.cag_groupHistory[1].players
+    active = _G.cag_groupHistory[1]
   else
-    source = raw.players
+    active = nil
   end
+  _G.cag_groupActiveEncounter = active
+  local source = (active ~= nil and active.players) or raw.players
   return cag_buildPlayersMap(source)
 end
 
 function _G.groupTab:GetData() return _G.cag_groupData end
 function _G.groupTab:GetDataForPlayer(player,includeTotals,category) return _G.cag_groupData end
 
+-- Duration must come from the same encounter as the totals, not from
+-- combatData[selectedMob], which is local to this client and changes when the
+-- user picks a different mob/encounter in the dropdowns. Falling back to the
+-- default behavior on cold-start (before any desktop data arrives) keeps the
+-- "Waiting for desktop app" placeholder rendering sanely.
+function _G.groupTab:Duration()
+  local active = _G.cag_groupActiveEncounter
+  if (active ~= nil and type(active.duration) == "number") then
+    return active.duration
+  end
+  return combatData[self.panel.selectedTarget]:Duration(Turbine.Engine.GetGameTime())
+end
+
 -- Seed with placeholder rows so the tab is visibly populated before any desktop-app data arrives.
-_G.cag_groupData = _G.cag_BuildGroupData({ players = { ["Waiting for desktop app..."] = 1 } })
+-- Version is baked into the placeholder label so the user can confirm which plugin build is
+-- loaded without opening chat — disappears as soon as real group data arrives.
+_G.cag_groupData = _G.cag_BuildGroupData({
+  players = { ["Waiting for desktop app \xc2\xb7 CAG v"..(versionNo or "?")] = 1 },
+})
 
 -- Poller: reads CAGroupData plugindata file (written by external companion app)
 -- and refreshes the Group tab. Two cadences:
@@ -241,6 +268,84 @@ local function cag_collectLocalStats()
   return amount, duration, attacks;
 end
 
+-- Encounter-detail snapshot (Phase 2): on COMBAT_END, build a per-mob / per-skill
+-- breakdown of the fight that just ended and persist to CAEncounterDetail.plugindata.
+-- The companion watches this file and forwards snapshots to the relay so remote
+-- viewers can drill from encounter -> mob -> player -> skill. We only serialize
+-- rows with damage > 0 so empty placeholder mobs never hit the wire.
+_G.cag_encounterDetailSeq = 0;
+
+local function cag_buildEncounterDetail()
+  if (combatData == nil or player == nil or player.name == nil) then return nil end
+  local enc = combatData.currentEncounter;
+  if (enc == nil or enc.orderedMobs == nil) then return nil end
+  local me = player.name;
+
+  local mobs = {}
+  -- orderedMobs[1] is the "Totals" aggregate (per-encounter totals across all real
+  -- mobs); real mobs start at index 2 and hold the per-target breakdown we want.
+  for i = 2, #enc.orderedMobs do
+    local mob = enc.orderedMobs[i];
+    if (mob ~= nil and mob.players ~= nil and mob.players[me] ~= nil) then
+      local pdata = mob.players[me];
+      local totals = pdata[1];
+      if (totals ~= nil and totals.dmgData ~= nil and (totals.dmgData.amount or 0) > 0) then
+        local skills = {}
+        for skillName, skillEntry in pairs(pdata) do
+          if (type(skillName) == "string" and skillEntry ~= nil and skillEntry.dmgData ~= nil and (skillEntry.dmgData.amount or 0) > 0) then
+            local d = skillEntry.dmgData;
+            skills[skillName] = {
+              amount = d.amount or 0,
+              attacks = d.attacks or 0,
+              max = d.max or 0,
+              min = d.min or 0,
+              crits = d.crits or 0,
+              devs = d.devs or 0,
+            }
+          end
+        end
+        local duration = mob.duration or 0;
+        if (mob.alive and not mob.terminated and type(mob.gameStartTime) == "number") then
+          duration = duration + (Turbine.Engine.GetGameTime() - mob.gameStartTime);
+        end
+        if (duration < 0) then duration = 0 end
+        table.insert(mobs, {
+          name = mob.mobName or "",
+          duration = math.floor(duration * 10) / 10,
+          total = totals.dmgData.amount or 0,
+          attacks = totals.dmgData.attacks or 0,
+          skills = skills,
+        })
+      end
+    end
+  end
+
+  if (#mobs == 0) then return nil end
+
+  -- Encounter-level totals pulled from the Totals aggregate (orderedMobs[1]) so the
+  -- relay can reconcile the detail snapshot against its own per-encounter summary.
+  local encTotals = enc.orderedMobs[1];
+  local encAmount, encAttacks, encDuration = 0, 0, 0;
+  if (encTotals ~= nil) then
+    encDuration = encTotals.duration or 0;
+    if (encTotals.players ~= nil and encTotals.players[me] ~= nil and encTotals.players[me][1] ~= nil and encTotals.players[me][1].dmgData ~= nil) then
+      encAmount = encTotals.players[me][1].dmgData.amount or 0;
+      encAttacks = encTotals.players[me][1].dmgData.attacks or 0;
+    end
+  end
+
+  _G.cag_encounterDetailSeq = _G.cag_encounterDetailSeq + 1;
+
+  return {
+    player = me,
+    seq = _G.cag_encounterDetailSeq,
+    duration = math.floor(encDuration * 10) / 10,
+    total = encAmount,
+    attacks = encAttacks,
+    mobs = mobs,
+  }
+end
+
 _G.cagLocalWriter.Update = function()
   local now = Turbine.Engine.GetGameTime();
   -- Detect combat-start transition: force an immediate write so the new
@@ -270,4 +375,14 @@ _G.cagLocalWriter.Update = function()
     attacks = attacks,
     inCombat = inCombat,
   });
+
+  -- On the COMBAT_END transition, write a per-mob/per-skill snapshot. currentEncounter
+  -- still holds the just-completed fight at this point — a new COMBAT_START won't
+  -- replace it until the next combat begins.
+  if (justExitedCombat) then
+    local detail = cag_buildEncounterDetail();
+    if (detail ~= nil) then
+      pcall(Turbine.PluginData.Save, Turbine.DataScope.Account, "CAEncounterDetail", detail);
+    end
+  end
 end

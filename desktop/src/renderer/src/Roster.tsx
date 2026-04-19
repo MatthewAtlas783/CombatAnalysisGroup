@@ -1,5 +1,6 @@
+import { useState } from 'react';
 import type { AppState } from '../../main/service.js';
-import type { EncounterSummary } from '../../main/protocol.js';
+import type { EncounterSummary, MobBreakdown } from '../../main/protocol.js';
 
 function fmtNumber(n: number): string {
   if (n >= 1_000_000) return (n / 1_000_000).toFixed(2) + 'M';
@@ -51,6 +52,7 @@ type ViewRow = {
   duration: number;
   updatedAt: number;
   online: boolean;
+  mobs: MobBreakdown[] | undefined;
 };
 
 type ViewModel = {
@@ -69,6 +71,7 @@ export function Roster({ state, now }: { state: AppState; now: number }) {
   const view = pickView(state, now);
   const rows = view.rows.slice().sort((a, b) => b.amount - a.amount);
   const top = rows[0]?.amount ?? 1;
+  const [expanded, setExpanded] = useState<string | undefined>(undefined);
 
   return (
     <div className="roster-wrap">
@@ -107,26 +110,42 @@ export function Roster({ state, now }: { state: AppState; now: number }) {
           {rows.map((row, idx) => {
             const pct = Math.max(2, Math.min(100, (row.amount / top) * 100));
             const isMe = row.name === state.player;
+            const isExpanded = expanded === row.name;
+            const hasDetail = !!(row.mobs && row.mobs.length > 0);
             const rowClass = [
               'roster-row',
               isMe ? 'me' : '',
               row.online ? '' : 'offline',
+              hasDetail ? 'expandable' : '',
+              isExpanded ? 'expanded' : '',
             ].filter(Boolean).join(' ');
             return (
-              <div key={row.name} className={rowClass}>
-                <div className="roster-bar" style={{ width: pct + '%' }} />
-                <div className="roster-cells">
-                  <span className="col col-rank">{idx + 1}</span>
-                  <span className="col col-player">
-                    {row.name}
-                    {!row.online && <span className="offline-tag">offline</span>}
-                  </span>
-                  <span className="col col-damage">{fmtNumber(row.amount)}</span>
-                  <span className="col col-dps">{fmtRate(row.amount, row.duration)}</span>
-                  {view.showAge && (
-                    <span className="col col-age">{fmtAge(row.updatedAt, now)}</span>
-                  )}
+              <div key={row.name} className="roster-row-wrap">
+                <div
+                  className={rowClass}
+                  onClick={hasDetail ? () => setExpanded(isExpanded ? undefined : row.name) : undefined}
+                  title={hasDetail ? 'click for per-target breakdown' : undefined}
+                >
+                  <div className="roster-bar" style={{ width: pct + '%' }} />
+                  <div className="roster-cells">
+                    <span className="col col-rank">{idx + 1}</span>
+                    <span className="col col-player">
+                      {hasDetail && (
+                        <span className="drill-caret">{isExpanded ? '▾' : '▸'}</span>
+                      )}
+                      {row.name}
+                      {!row.online && <span className="offline-tag">offline</span>}
+                    </span>
+                    <span className="col col-damage">{fmtNumber(row.amount)}</span>
+                    <span className="col col-dps">{fmtRate(row.amount, row.duration)}</span>
+                    {view.showAge && (
+                      <span className="col col-age">{fmtAge(row.updatedAt, now)}</span>
+                    )}
+                  </div>
                 </div>
+                {isExpanded && row.mobs && (
+                  <PlayerBreakdown mobs={row.mobs} />
+                )}
               </div>
             );
           })}
@@ -150,6 +169,7 @@ function pickView(state: AppState, now: number): ViewModel {
           duration: p.duration || dur,
           updatedAt: enc.endedAt ?? enc.startedAt,
           online: state.players[name]?.online ?? true,
+          mobs: p.mobs,
         })),
         title: `Encounter #${enc.id}`,
         subtitle: `${fmtClock(enc.startedAt)}${enc.endedAt ? ` → ${fmtClock(enc.endedAt)}` : ' · in progress'}`,
@@ -174,6 +194,7 @@ function pickView(state: AppState, now: number): ViewModel {
         duration: p.duration || dur,
         updatedAt: state.players[name]?.updatedAt ?? enc.startedAt,
         online: state.players[name]?.online ?? true,
+        mobs: p.mobs,
       })),
       title: 'Live encounter',
       subtitle: `started ${fmtClock(enc.startedAt)}`,
@@ -197,6 +218,7 @@ function pickView(state: AppState, now: number): ViewModel {
         duration: p.duration || dur,
         updatedAt: latest.endedAt ?? latest.startedAt,
         online: state.players[name]?.online ?? true,
+        mobs: p.mobs,
       })),
       title: `Last encounter · #${latest.id}`,
       subtitle: `${fmtClock(latest.startedAt)}${latest.endedAt ? ` → ${fmtClock(latest.endedAt)}` : ''} · idle`,
@@ -220,6 +242,67 @@ function pickView(state: AppState, now: number): ViewModel {
     emptyTitle: 'No parses yet',
     emptySub: 'Once you (or anyone in your room) deals damage, an encounter will appear here.',
   };
+}
+
+function PlayerBreakdown({ mobs }: { mobs: MobBreakdown[] }) {
+  const sortedMobs = mobs.slice().sort((a, b) => b.total - a.total);
+  const [activeMob, setActiveMob] = useState<string>(sortedMobs[0]?.name ?? '');
+  const mob = sortedMobs.find(m => m.name === activeMob) ?? sortedMobs[0];
+  if (!mob) return null;
+  const skills = Object.entries(mob.skills).sort((a, b) => b[1].amount - a[1].amount);
+  const topSkill = skills[0]?.[1].amount ?? 1;
+
+  return (
+    <div className="breakdown">
+      <div className="breakdown-tabs">
+        {sortedMobs.map(m => (
+          <button
+            key={m.name}
+            className={`breakdown-tab ${m.name === mob.name ? 'active' : ''}`}
+            onClick={() => setActiveMob(m.name)}
+            title={`${fmtNumber(m.total)} dmg · ${m.attacks} hits · ${fmtDuration(m.duration)}`}
+          >
+            <span className="bt-name">{m.name}</span>
+            <span className="bt-total">{fmtNumber(m.total)}</span>
+          </button>
+        ))}
+      </div>
+      <div className="breakdown-mob-meta">
+        <span>{mob.attacks} hits</span>
+        <span>·</span>
+        <span>{fmtDuration(mob.duration)}</span>
+        <span>·</span>
+        <span>{fmtRate(mob.total, mob.duration)} dps</span>
+      </div>
+      {skills.length === 0 ? (
+        <div className="breakdown-empty">no per-skill data</div>
+      ) : (
+        <div className="skill-table">
+          <div className="skill-row skill-head">
+            <span className="sc sc-name">skill</span>
+            <span className="sc sc-amount">dmg</span>
+            <span className="sc sc-attacks">hits</span>
+            <span className="sc sc-max">max</span>
+            <span className="sc sc-crit">crit%</span>
+          </div>
+          {skills.map(([skillName, s]) => {
+            const pct = Math.max(2, Math.min(100, (s.amount / topSkill) * 100));
+            const critPct = s.attacks > 0 ? Math.round(((s.crits + s.devs) / s.attacks) * 100) : 0;
+            return (
+              <div key={skillName} className="skill-row">
+                <div className="skill-bar" style={{ width: pct + '%' }} />
+                <span className="sc sc-name">{skillName}</span>
+                <span className="sc sc-amount">{fmtNumber(s.amount)}</span>
+                <span className="sc sc-attacks">{s.attacks}</span>
+                <span className="sc sc-max">{fmtNumber(s.max)}</span>
+                <span className="sc sc-crit">{critPct}%</span>
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
 }
 
 function EncounterBar({ state, now }: { state: AppState; now: number }) {

@@ -4,6 +4,7 @@ import { readPluginData, watchPluginData, writePluginData } from './plugindata.j
 import { RelayClient, type RelayStatus } from './relay.js';
 import type {
   EncounterSummary,
+  MobBreakdown,
   PlayerSnapshot,
   ServerMessage,
 } from './protocol.js';
@@ -34,6 +35,7 @@ export type AppState = {
 
 const LOCAL_KEY = 'CALocalStats';
 const GROUP_KEY = 'CAGroupData';
+const DETAIL_KEY = 'CAEncounterDetail';
 // Heartbeat: floor on how often we re-send local stats even when nothing
 // changed. Real updates are pushed event-driven from the chokidar watcher,
 // so this is only the keep-alive for stale-but-still-here state.
@@ -73,8 +75,13 @@ export class Service extends EventEmitter {
   private state: AppState = defaultState();
   private relay: RelayClient | undefined;
   private stopWatch: (() => void) | undefined;
+  private stopDetailWatch: (() => void) | undefined;
   private heartbeatTimer: NodeJS.Timeout | undefined;
   private lastSentAt = 0;
+  // Per-player highest `seq` we've already forwarded to the relay — guards
+  // against chokidar re-firing (e.g. on atomic-rename) replaying the same
+  // snapshot and burning relay cycles / bumping timestamps.
+  private lastForwardedDetailSeq = new Map<string, number>();
   // Local mirror of peers we've seen. Survives relay drops via TTL so an
   // unstable relay or a peer logging off doesn't yank rows out of the UI.
   private peerCache = new Map<string, { snap: PlayerSnapshot; cachedAt: number }>();
@@ -104,9 +111,12 @@ export class Service extends EventEmitter {
     this.heartbeatTimer = undefined;
     if (this.stopWatch) this.stopWatch();
     this.stopWatch = undefined;
+    if (this.stopDetailWatch) this.stopDetailWatch();
+    this.stopDetailWatch = undefined;
     if (this.relay) this.relay.close();
     this.relay = undefined;
     this.peerCache.clear();
+    this.lastForwardedDetailSeq.clear();
   }
 
   private restartFromSettings(): void {
@@ -118,11 +128,13 @@ export class Service extends EventEmitter {
     let account: string;
     let inputPath: string;
     let outputPath: string;
+    let detailPath: string;
     try {
       pluginDataDir = findPluginDataDir(settings.pluginDataDir || undefined);
       account = pickAccount(pluginDataDir, settings.account || undefined);
       inputPath = accountScopePath(pluginDataDir, account, LOCAL_KEY);
       outputPath = accountScopePath(pluginDataDir, account, GROUP_KEY);
+      detailPath = accountScopePath(pluginDataDir, account, DETAIL_KEY);
     } catch (err) {
       this.patch({
         bootError: err instanceof Error ? err.message : String(err),
@@ -240,6 +252,28 @@ export class Service extends EventEmitter {
       /* ignore — initial may not exist */
     }
 
+    this.stopDetailWatch = watchPluginData(detailPath, (data, error) => {
+      if (error) return;
+      const detail = asEncounterDetail(data);
+      if (!detail) return;
+      // Plugin writes this once per COMBAT_END. chokidar may still fire twice
+      // on atomic rename; guard by `seq` so we only forward new snapshots.
+      const last = this.lastForwardedDetailSeq.get(detail.player) ?? 0;
+      if (detail.seq <= last) return;
+      this.lastForwardedDetailSeq.set(detail.player, detail.seq);
+      if (this.relay) {
+        this.relay.send({
+          type: 'encounterDetail',
+          player: detail.player,
+          seq: detail.seq,
+          duration: detail.duration,
+          total: detail.total,
+          attacks: detail.attacks,
+          mobs: detail.mobs,
+        });
+      }
+    });
+
     this.heartbeatTimer = setInterval(() => this.pushLocalStats(), SEND_HEARTBEAT_MS);
 
     this.relay.connect();
@@ -300,6 +334,57 @@ type LocalSnapshot = {
   attacks: number;
   inCombat: boolean;
 };
+
+type EncounterDetailPayload = {
+  player: string;
+  seq: number;
+  duration: number;
+  total: number;
+  attacks: number;
+  mobs: MobBreakdown[];
+};
+
+function asEncounterDetail(raw: unknown): EncounterDetailPayload | undefined {
+  if (!raw || typeof raw !== 'object') return undefined;
+  const r = raw as Record<string, unknown>;
+  if (typeof r.player !== 'string' || typeof r.seq !== 'number') return undefined;
+  if (!Array.isArray(r.mobs)) return undefined;
+  const mobs: MobBreakdown[] = [];
+  for (const m of r.mobs) {
+    if (!m || typeof m !== 'object') continue;
+    const mo = m as Record<string, unknown>;
+    if (typeof mo.name !== 'string') continue;
+    const skillsIn = (mo.skills && typeof mo.skills === 'object') ? (mo.skills as Record<string, unknown>) : {};
+    const skills: MobBreakdown['skills'] = {};
+    for (const [skillName, v] of Object.entries(skillsIn)) {
+      if (!v || typeof v !== 'object') continue;
+      const sv = v as Record<string, unknown>;
+      skills[skillName] = {
+        amount: typeof sv.amount === 'number' ? sv.amount : 0,
+        attacks: typeof sv.attacks === 'number' ? sv.attacks : 0,
+        max: typeof sv.max === 'number' ? sv.max : 0,
+        min: typeof sv.min === 'number' ? sv.min : 0,
+        crits: typeof sv.crits === 'number' ? sv.crits : 0,
+        devs: typeof sv.devs === 'number' ? sv.devs : 0,
+      };
+    }
+    mobs.push({
+      name: mo.name,
+      duration: typeof mo.duration === 'number' ? mo.duration : 0,
+      total: typeof mo.total === 'number' ? mo.total : 0,
+      attacks: typeof mo.attacks === 'number' ? mo.attacks : 0,
+      skills,
+    });
+  }
+  return {
+    player: r.player,
+    seq: r.seq,
+    duration: typeof r.duration === 'number' ? r.duration : 0,
+    total: typeof r.total === 'number' ? r.total : 0,
+    attacks: typeof r.attacks === 'number' ? r.attacks : 0,
+    mobs,
+  };
+}
 
 function asLocalSnapshot(raw: unknown, fallbackPlayer: string | undefined): LocalSnapshot | undefined {
   if (!raw || typeof raw !== 'object') return undefined;

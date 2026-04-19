@@ -51,8 +51,8 @@ import "TumbaAnalysis.Effects";          --- v4.1 (for BuffBars Debuff/CC tracki
 --[[ Start up ]]--
 
 -- Print the Welcome Message (the version number is extracted automatically)
-Turbine.Shell.WriteLine("TumbaAnalysis (forked from Combat Analysis by Evendale, enhanced by Landal)"..(locale ~= "en" and L.TranslatedBy ~= nil and L.TranslatedBy ~= "" and " ("..L.TranslatedBy..")" or ""));
-Turbine.Shell.WriteLine("TumbaAnalysis v"..versionNo.." (CA upstream "..versionNo..")"..(locale ~= "en" and L.TranslatedBy ~= nil and L.TranslatedBy ~= "" and " ("..L.TranslatedBy..")" or ""));
+Turbine.Shell.WriteLine("[CAG] TumbaAnalysis (forked from Combat Analysis by Evendale/Landal, group-parse fork by Uldec)");
+Turbine.Shell.WriteLine("[CAG] v"..versionNo.." loaded \xc2\xb7 shared group parses via desktop relay");
 
 -- Load the Data Files List to assist with loading/saving
 LoadDataList();
