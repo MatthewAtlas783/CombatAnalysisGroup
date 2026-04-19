@@ -7,6 +7,10 @@ export type Settings = {
   pluginDataDir: string;
   account: string;
   startMinimized: boolean;
+  // Hidden dev flag: when true, the app polls GitHub Releases for updates.
+  // Defaults to false so end users never auto-update; flip it on locally by
+  // editing %APPDATA%/TumbaAnalysis/settings.json on the dev machine.
+  autoUpdateEnabled: boolean;
 };
 
 const DEFAULTS: Settings = {
@@ -16,6 +20,7 @@ const DEFAULTS: Settings = {
   pluginDataDir: '',
   account: '',
   startMinimized: false,
+  autoUpdateEnabled: false,
 };
 
 const store = new Store<Settings>({
@@ -31,6 +36,7 @@ export function getSettings(): Settings {
     pluginDataDir: store.get('pluginDataDir', DEFAULTS.pluginDataDir),
     account: store.get('account', DEFAULTS.account),
     startMinimized: store.get('startMinimized', DEFAULTS.startMinimized),
+    autoUpdateEnabled: store.get('autoUpdateEnabled', DEFAULTS.autoUpdateEnabled),
   };
 }
 

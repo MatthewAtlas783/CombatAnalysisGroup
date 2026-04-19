@@ -1,5 +1,6 @@
 import { app, dialog, shell } from 'electron';
 import electronUpdater from 'electron-updater';
+import { getSettings } from './settings.js';
 
 const { autoUpdater } = electronUpdater;
 
@@ -47,11 +48,13 @@ export function initAutoUpdater(): void {
     });
   });
 
-  // Silent background check on startup. Errors are swallowed unless the user
-  // explicitly asked.
-  void autoUpdater.checkForUpdates().catch(() => {});
+  // Background polling is OFF by default so end-user installs don't silently
+  // upgrade. Opt in by setting `autoUpdateEnabled: true` in
+  // %APPDATA%/TumbaAnalysis/settings.json on the dev machine. Manual
+  // "Check for updates…" from the tray still works regardless of this flag.
+  if (!getSettings().autoUpdateEnabled) return;
 
-  // Re-check every 4 hours while the app stays open.
+  void autoUpdater.checkForUpdates().catch(() => {});
   setInterval(() => {
     void autoUpdater.checkForUpdates().catch(() => {});
   }, 4 * 60 * 60 * 1000);
