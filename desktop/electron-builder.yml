@@ -1,0 +1,24 @@
+appId: com.tumba.analysis
+productName: TumbaAnalysis
+copyright: Copyright (c) 2026
+asar: true
+directories:
+  output: dist
+  buildResources: resources
+files:
+  - 'out/**/*'
+  - '!**/{.eslintrc,.prettierrc,*.md,LICENSE,license}'
+extraMetadata:
+  main: out/main/index.js
+win:
+  target:
+    - target: nsis
+      arch: [x64]
+  artifactName: ${productName}-Setup-${version}.${ext}
+nsis:
+  oneClick: false
+  perMachine: false
+  allowToChangeInstallationDirectory: true
+  createDesktopShortcut: true
+  createStartMenuShortcut: true
+  shortcutName: TumbaAnalysis

@@ -140,13 +140,20 @@ _G.cagGroupPoller.Update = function()
     _G.cag_groupPendingPoll = false;
     if (type(result) == "table") then
       _G.cag_groupData = _G.cag_BuildGroupData(result);
+      -- Force the Group tab to repaint with the new data. Other tabs refresh
+      -- naturally because combatData fires events; ours pulls from a separate
+      -- source so the panel doesn't know to re-render without a kick.
+      if (_G.groupTab ~= nil and _G.groupTab.panel ~= nil) then
+        pcall(_G.groupTab.FullUpdate, _G.groupTab, true);
+      end
     end
   end);
   if (not ok) then _G.cag_groupPendingPoll = false end
 end
 
--- Local-stats writer: publishes the local player's totals-encounter damage so
--- the companion app can forward it to the relay. Read by companion via
+-- Local-stats writer: publishes the local player's CURRENT-encounter damage so
+-- the companion forwards per-fight numbers (resets when a new encounter starts,
+-- holds the last fight's totals between fights). Read by companion via
 -- <PluginData>/<account>/AllServers/CALocalStats.plugindata.
 _G.cagLocalWriter = Turbine.UI.Control();
 _G.cagLocalWriter:SetWantsUpdates(true);
@@ -156,8 +163,19 @@ _G.cag_localLastAmount = -1;
 _G.cag_localLastDuration = -1;
 
 local function cag_collectLocalStats()
-  if (combatData == nil or combatData.totalsEncounter == nil) then return nil end
-  local mob = combatData.totalsEncounter.orderedMobs and combatData.totalsEncounter.orderedMobs[1];
+  if (combatData == nil) then return nil end
+  -- Prefer currentEncounter for per-fight reset behavior; fall back to the most
+  -- recent encounter so the last fight's numbers stay visible between pulls.
+  local enc = combatData.currentEncounter;
+  if (enc == nil and combatData.combatElements ~= nil) then
+    -- combatElements is ordered newest-last; walk backwards to find the latest encounter
+    for i = #combatData.combatElements, 1, -1 do
+      local el = combatData.combatElements[i];
+      if (el ~= nil and el.orderedMobs ~= nil) then enc = el; break end
+    end
+  end
+  if (enc == nil) then return nil end
+  local mob = enc.orderedMobs and enc.orderedMobs[1];
   if (mob == nil or mob.players == nil) then return nil end
   local pdata = mob.players[player.name];
   local amount = 0;
