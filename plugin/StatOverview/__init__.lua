@@ -144,3 +144,48 @@ _G.cagGroupPoller.Update = function()
   end);
   if (not ok) then _G.cag_groupPendingPoll = false end
 end
+
+-- Local-stats writer: publishes the local player's totals-encounter damage so
+-- the companion app can forward it to the relay. Read by companion via
+-- <PluginData>/<account>/AllServers/CALocalStats.plugindata.
+_G.cagLocalWriter = Turbine.UI.Control();
+_G.cagLocalWriter:SetWantsUpdates(true);
+_G.cag_localLastWriteAt = 0;
+_G.cag_localWriteIntervalSec = 1;
+_G.cag_localLastAmount = -1;
+_G.cag_localLastDuration = -1;
+
+local function cag_collectLocalStats()
+  if (combatData == nil or combatData.totalsEncounter == nil) then return nil end
+  local mob = combatData.totalsEncounter.orderedMobs and combatData.totalsEncounter.orderedMobs[1];
+  if (mob == nil or mob.players == nil) then return nil end
+  local pdata = mob.players[player.name];
+  local amount = 0;
+  if (pdata ~= nil and pdata[1] ~= nil and pdata[1].dmgData ~= nil and type(pdata[1].dmgData.amount) == "number") then
+    amount = pdata[1].dmgData.amount;
+  end
+  local duration = (type(mob.duration) == "number" and mob.duration) or 0;
+  if (mob.alive and not mob.terminated and type(mob.gameStartTime) == "number") then
+    duration = duration + (Turbine.Engine.GetGameTime() - mob.gameStartTime);
+  end
+  if (duration < 0) then duration = 0 end
+  return amount, duration;
+end
+
+_G.cagLocalWriter.Update = function()
+  local now = Turbine.Engine.GetGameTime();
+  if (now - _G.cag_localLastWriteAt < _G.cag_localWriteIntervalSec) then return end
+  _G.cag_localLastWriteAt = now;
+  local amount, duration = cag_collectLocalStats();
+  if (amount == nil) then return end
+  -- skip writes when nothing changed (durations tick continuously, so use rounded compare)
+  local roundedDuration = math.floor(duration * 10) / 10;
+  if (amount == _G.cag_localLastAmount and roundedDuration == _G.cag_localLastDuration) then return end
+  _G.cag_localLastAmount = amount;
+  _G.cag_localLastDuration = roundedDuration;
+  pcall(Turbine.PluginData.Save, Turbine.DataScope.Account, "CALocalStats", {
+    player = player.name,
+    amount = amount,
+    duration = roundedDuration,
+  });
+end

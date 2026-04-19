@@ -6,11 +6,12 @@ export type Config = {
   account: string | undefined;
 };
 
-function required(name: string): string {
+const DEFAULT_RELAY_URL = 'wss://combatanalysisgroup-production.up.railway.app';
+const DEFAULT_ROOM = 'lobby';
+
+function withDefault(name: string, fallback: string): string {
   const v = process.env[name];
-  if (!v || v.trim() === '') {
-    throw new Error(`Missing required env var ${name}. See .env.example.`);
-  }
+  if (!v || v.trim() === '') return fallback;
   return v.trim();
 }
 
@@ -22,8 +23,8 @@ function optional(name: string): string | undefined {
 
 export function loadConfig(): Config {
   return {
-    relayUrl: required('CAG_RELAY_URL'),
-    room: required('CAG_ROOM'),
+    relayUrl: withDefault('CAG_RELAY_URL', DEFAULT_RELAY_URL),
+    room: withDefault('CAG_ROOM', DEFAULT_ROOM),
     player: optional('CAG_PLAYER'),
     pluginDataDir: optional('CAG_PLUGINDATA_DIR'),
     account: optional('CAG_ACCOUNT'),
